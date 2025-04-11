@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - DevFlow</title>
+</head>
+<body>
+    <!-- Encabezado -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+        <h2>DevFlow</h2>
+        <div>
+            <span>Cliente: <span th:text="${nombreUsuario}">Nombre</span></span>
+            <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+        </div>
+    </div>
+
+    <!-- Contenedor principal -->
+    <div style="display: flex; height: 90vh;">
+        <!-- Barra lateral -->
+        <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+            <ul style="list-style-type: none; padding: 0;">
+                <li>🏠 <a href="/cliente">Inicio</a></li>
+                <li>📁 <a href="/cliente/proyectos">Mis Proyectos</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main style="flex: 1; padding: 30px;">
+            <h3>🔲 Resumen rápido:</h3>
+            <ul>
+                <li>✔ 4 Proyectos en proceso</li>
+                <li>✔ 2 Proyectos finalizados</li>
+                <li>✔ 1 Proyecto rechazado</li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

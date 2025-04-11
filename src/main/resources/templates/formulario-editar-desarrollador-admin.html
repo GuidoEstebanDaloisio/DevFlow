@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Editar Desarrollador</title>
+    </head>
+    <body>
+        <h2>✏️ Editar Desarrollador</h2>
+
+        <!-- Mostrar errores si los hay -->
+        <div th:if="${error}" style="color: red;">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{'/admin/desarrolladores/editar/' + ${desarrollador.id}}" th:object="${desarrollador}" method="post">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required><br><br>
+
+            <label for="habilidades">Habilidades:</label>
+            <input type="text" id="habilidades" th:field="*{habilidades}" required><br><br>
+
+            <button type="submit">Guardar cambios</button>
+            <a href="/admin/desarrolladores"><button type="button">Cancelar</button></a>
+        </form>
+    </body>
+</html>

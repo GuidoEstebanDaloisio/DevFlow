@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear nuevo desarrollador</title>
+</head>
+<body>
+    <h2>Crear nuevo desarrollador</h2>
+
+    <form method="POST" action="/admin/desarrolladores/nuevo">
+        <label>Nombre:<br>
+            <input type="text" name="nombre" th:value="${nombre}" required>
+        </label><br><br>
+
+        <label>Habilidades:<br>
+            <input type="text" name="habilidades" th:value="${habilidades}" placeholder="Ej: Java, React, SQL" required>
+        </label><br><br>
+
+        <button type="submit">Guardar</button>
+        <a href="/admin/desarrolladores"><button type="button">Cancelar</button></a>
+    </form>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Asignar Devs - Administrador</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <h2>DevFlow</h2>
+            <div>
+                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <!-- Menú lateral + contenido -->
+        <div style="display: flex;">
+            <!-- Barra lateral -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="/admin">Inicio</a></li>
+                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <div style="flex: 1; padding: 20px;">
+                <h2>🧠 Desarrolladores</h2>
+
+                <!-- Filtros de búsqueda -->
+                <form action="/admin/desarrolladores" method="get" style="margin-bottom: 20px;">
+                    <input type="text" name="filtro" placeholder="Buscar por nombre o habilidad..." th:value="${filtro}">
+                    <select name="estado">
+                        <option value="">Estado: Todos</option>
+                        <option th:value="'DISPONIBLE'" th:selected="${estadoSeleccionado == 'DISPONIBLE'}">Disponible</option>
+                        <option th:value="'ASIGNADO'" th:selected="${estadoSeleccionado == 'ASIGNADO'}">Asignado</option>
+                    </select>
+                    <button type="submit">Buscar</button>
+                </form>
+
+                <!-- Tabla de desarrolladores -->
+                <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Habilidades</th>
+                            <th>Disponibilidad</th>
+                            <th>Proyecto asignado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="dev : ${desarrolladores}">
+                            <td th:text="${dev.id}"></td>
+                            <td th:text="${dev.nombre}"></td>
+                            <td th:text="${dev.habilidades}"></td>
+                            <td th:text="${dev.estaDisponible} ? 'Disponible' : 'Asignado'"></td>
+                            <td th:text="${dev.proyecto != null ? dev.proyecto.nombre : 'Sin proyecto'}"></td>
+                            <td>
+                                <a th:href="@{'/admin/desarrolladores/editar/' + ${dev.id}}">✏️</a>
+                                <a th:href="@{'/admin/desarrolladores/eliminar/' + ${dev.id}}">🗑️</a>
+                                <a th:href="@{'/admin/desarrolladores/asignar/' + ${dev.id}}">📌</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Botón para crear nuevo desarrollador -->
+                <div style="margin-top: 20px;">
+                    <a href="/admin/desarrolladores/nuevo">
+                        <button>+ Crear nuevo usuario</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

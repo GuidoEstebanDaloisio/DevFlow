@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Proyecto</title>
+</head>
+<body>
+    <h2>✏️ Editar Proyecto</h2>
+
+    <!-- Mostrar errores si los hay -->
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{'/cliente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" method="post">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" th:field="*{titulo}" required><br><br>
+
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" th:field="*{descripcion}" rows="4" cols="50"></textarea><br><br>
+
+        <label for="medioEncargo">Medio de Encargo:</label>
+        <input type="text" id="medioEncargo" th:field="*{medioEncargo}" required><br><br>
+
+        <label for="presupuesto">Presupuesto:</label>
+        <input type="number" id="presupuesto" th:field="*{presupuesto}" step="0.01" required><br><br>       
+
+        <button type="submit">Guardar cambios</button>
+        <a th:href="@{/cliente/proyectos}"><button type="button">Cancelar</button></a>
+    </form>
+</body>
+</html>

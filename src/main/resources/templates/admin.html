@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel de Administración - DevFlow</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <h2>DevFlow</h2>
+            <div>
+                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <!-- Contenedor principal -->
+        <div style="display: flex; height: 90vh;">
+
+            <!-- Barra lateral -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="#">Inicio</a></li>
+                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <main style="flex: 1; padding: 30px;">
+                <h3>🔲 Resumen rápido:</h3>
+                <ul>
+                    <li>✔ 10 Proyectos en curso</li>
+                    <li>✔ 3 Proyectos completados</li>
+                    <li>✔ 15 Usuarios totales</li>
+                    <li>✔ 8 Devs disponibles</li>
+                </ul>
+            </main>
+        </div>
+    </body>
+</html>
