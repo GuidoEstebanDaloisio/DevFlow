@@ -1,6 +1,7 @@
 package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.Desarrollador;
+import com.example.DevFlow.model.MensajeError;
 import com.example.DevFlow.repository.DesarrolladorRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,9 @@ public class DesarrolladorService {
     @Autowired
     private DesarrolladorRepository desarrolladorRepository;
 
+    private MensajeError error;
+
+    
     public List<Desarrollador> obtenerDesarrolladores() {
         return desarrolladorRepository.findAll();
     }
@@ -26,47 +30,46 @@ public class DesarrolladorService {
         return desarrolladorRepository.findAll();
     }
 
-public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {
-    // Obtener todos los desarrolladores del repositorio
-    List<Desarrollador> todosLosDesarrolladores = desarrolladorRepository.findAll();
+    public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {
+        // Obtener todos los desarrolladores del repositorio
+        List<Desarrollador> todosLosDesarrolladores = desarrolladorRepository.findAll();
 
-    // Lista filtrada a retornar
-    List<Desarrollador> desarrolladoresFiltrados = new ArrayList<>();
+        // Lista filtrada a retornar
+        List<Desarrollador> desarrolladoresFiltrados = new ArrayList<>();
 
-    for (Desarrollador dev : todosLosDesarrolladores) {
-        boolean coincideConFiltro = true;
-        boolean coincideConEstado = true;
+        for (Desarrollador dev : todosLosDesarrolladores) {
+            boolean coincideConFiltro = true;
+            boolean coincideConEstado = true;
 
-        // Filtrado por nombre o habilidades
-        if (filtro != null && !filtro.isBlank()) {
-            String filtroLower = filtro.toLowerCase();
+            // Filtrado por nombre o habilidades
+            if (filtro != null && !filtro.isBlank()) {
+                String filtroLower = filtro.toLowerCase();
 
-            boolean nombreCoincide = dev.getNombre() != null &&
-                    dev.getNombre().toLowerCase().contains(filtroLower);
-            boolean habilidadesCoinciden = dev.getHabilidades() != null &&
-                    dev.getHabilidades().toLowerCase().contains(filtroLower);
+                boolean nombreCoincide = dev.getNombre() != null
+                        && dev.getNombre().toLowerCase().contains(filtroLower);
+                boolean habilidadesCoinciden = dev.getHabilidades() != null
+                        && dev.getHabilidades().toLowerCase().contains(filtroLower);
 
-            coincideConFiltro = nombreCoincide || habilidadesCoinciden;
-        }
+                coincideConFiltro = nombreCoincide || habilidadesCoinciden;
+            }
 
-        // Filtrado por estado: DISPONIBLE o ASIGNADO
-        if (estado != null && !estado.isBlank()) {
-            if (estado.equalsIgnoreCase("DISPONIBLE")) {
-                coincideConEstado = dev.getEstaDisponible() != null && dev.getEstaDisponible();
-            } else if (estado.equalsIgnoreCase("ASIGNADO")) {
-                coincideConEstado = dev.getEstaDisponible() != null && !dev.getEstaDisponible();
+            // Filtrado por estado: DISPONIBLE o ASIGNADO
+            if (estado != null && !estado.isBlank()) {
+                if (estado.equalsIgnoreCase("DISPONIBLE")) {
+                    coincideConEstado = dev.getEstaDisponible() != null && dev.getEstaDisponible();
+                } else if (estado.equalsIgnoreCase("ASIGNADO")) {
+                    coincideConEstado = dev.getEstaDisponible() != null && !dev.getEstaDisponible();
+                }
+            }
+
+            // Si cumple con ambos filtros, lo agregamos a la lista
+            if (coincideConFiltro && coincideConEstado) {
+                desarrolladoresFiltrados.add(dev);
             }
         }
 
-        // Si cumple con ambos filtros, lo agregamos a la lista
-        if (coincideConFiltro && coincideConEstado) {
-            desarrolladoresFiltrados.add(dev);
-        }
+        return desarrolladoresFiltrados;
     }
-
-    return desarrolladoresFiltrados;
-}
-
 
     public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
         return desarrolladorRepository.save(desarrollador);
@@ -86,18 +89,17 @@ public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String
     public void eliminarDesarrollador(Long id) {
         desarrolladorRepository.deleteById(id);
     }
-    
-public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
-    Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
-    if (desarrolladorOptional.isEmpty()) {
-        throw new IllegalArgumentException("El desarrollador no existe.");
+
+    public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
+        Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
+        if (desarrolladorOptional.isEmpty()) {
+            throw new IllegalArgumentException(error.DESARROLLADOR_NO_EXISTE);
+        }
+
+        Desarrollador desarrollador = desarrolladorOptional.get();
+        desarrollador.setNombre(nombre);
+        desarrollador.setHabilidades(habilidades);
+        desarrolladorRepository.save(desarrollador);
     }
-
-    Desarrollador desarrollador = desarrolladorOptional.get();
-    desarrollador.setNombre(nombre);
-    desarrollador.setHabilidades(habilidades);
-    desarrolladorRepository.save(desarrollador);
-}
-
 
 }

@@ -1,7 +1,6 @@
 package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.*;
-import com.example.DevFlow.repository.DesarrolladorRepository;
 import com.example.DevFlow.repository.ProyectoRepository;
 import java.util.List;
 import java.util.Optional;
@@ -13,14 +12,12 @@ public class ProyectoService {
 
     @Autowired
     private ProyectoRepository proyectoRepository;
+    
+    private MensajeError error;
 
-    @Autowired
-    private DesarrolladorRepository desarrolladorRepository;
-
-// Crear un nuevo proyecto
     public Proyecto crearProyecto(Proyecto proyecto) {
         if (proyecto.getPresupuesto() == null || proyecto.getPresupuesto() <= 0) {
-            throw new IllegalArgumentException("El presupuesto debe ser mayor a cero.");
+            throw new IllegalArgumentException(error.PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
         }
         return proyectoRepository.save(proyecto);
     }
@@ -29,11 +26,11 @@ public class ProyectoService {
         Proyecto proyecto = obtenerProyectoPorId(idProyecto);
 
         if (!proyecto.getUsuario().getId().equals(cliente.getId())) {
-            throw new IllegalArgumentException("No tenés permiso para editar este proyecto.");
+            throw new IllegalArgumentException(error.NO_TIENE_PERMISO_DE_EDITAR_PROYECTO);
         }
 
         if (proyecto.getEstadoAvance() != EstadoProyecto.ESPERANDO_REVISION) {
-            throw new IllegalArgumentException("Este proyecto no se puede editar en su estado actual.");
+            throw new IllegalArgumentException(error.NO_SE_PUEDE_EDITAR_PROYECTO_EN_ESTE_ESTADO);
         }
 
         return proyecto;
@@ -43,7 +40,7 @@ public class ProyectoService {
             String medioEncargo, Double presupuesto) {
 
         if (presupuesto == null || presupuesto <= 0) {
-            throw new IllegalArgumentException("El presupuesto debe ser mayor a cero.");
+            throw new IllegalArgumentException(error.PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
         }
 
         Proyecto proyecto = validarEdicionProyectoPorCliente(idProyecto, cliente);
@@ -56,46 +53,19 @@ public class ProyectoService {
         proyectoRepository.save(proyecto);
     }
 
-    // Actualizar un proyecto existente
-    public Proyecto actualizarProyecto(Long id, Proyecto proyecto) {
-        Optional<Proyecto> proyectoExistente = proyectoRepository.findById(id);
-        if (proyectoExistente.isEmpty()) {
-            throw new IllegalArgumentException("El proyecto con ID: " + id + " no existe.");
-        }
-        proyecto.setId(id);
-        return proyectoRepository.save(proyecto);
-    }
-
-    // Obtener todos los proyectos
     public List<Proyecto> obtenerProyectos() {
         return proyectoRepository.findAll();
     }
 
-    // Obtener un proyecto por ID
     public Proyecto obtenerProyectoPorId(Long id) {
         Optional<Proyecto> proyectoOptional = proyectoRepository.findById(id);
         if (proyectoOptional.isEmpty()) {
-            throw new IllegalArgumentException("Proyecto no encontrado con ID: " + id);
+            throw new IllegalArgumentException(error.proyectoNoEncontradoPorId(id));
         }
         return proyectoOptional.get();
     }
 
-    // Obtener un proyecto por ID del cliente
     public List<Proyecto> obtenerProyectosPorIdCliente(Long idCliente) {
         return proyectoRepository.findByUsuario_Id(idCliente);
-    }
-
-    // Eliminar un proyecto por ID
-    public void eliminarProyecto(Long id) {
-        Optional<Proyecto> proyectoOptional = proyectoRepository.findById(id);
-        if (proyectoOptional.isPresent()) {
-            Proyecto proyecto = proyectoOptional.get();
-            // Actualizar la disponibilidad de los desarrolladores
-            proyecto.getDesarrolladores().forEach(desarrollador -> {
-                desarrollador.setEstaDisponible(true);
-                desarrolladorRepository.save(desarrollador);
-            });
-            proyectoRepository.deleteById(id);
-        }
     }
 }
