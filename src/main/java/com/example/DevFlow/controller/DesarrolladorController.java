@@ -49,7 +49,7 @@ public class DesarrolladorController {
         model.addAttribute("filtro", filtro);
         model.addAttribute("estadoSeleccionado", estado);
 
-        return "desarrolladores-admin";
+        return "administrador/listadoDeDesarrolladores";
     }
 
     @GetMapping("/admin/desarrolladores/nuevo")
@@ -66,7 +66,7 @@ public class DesarrolladorController {
         model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
 
         // Muestra la vista con el formulario
-        return "desarrollador-nuevo";
+        return "administrador/nuevoDesarrollador";
     }
 
     @GetMapping("/admin/desarrolladores/editar/{id}")
@@ -85,7 +85,7 @@ public class DesarrolladorController {
         }
 
         model.addAttribute("desarrollador", desarrolladorOptional.get());
-        return "formulario-editar-desarrollador-admin";
+        return "administrador/editarDesarrollador";
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ public class DesarrolladorController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("desarrollador", desarrolladorActualizado);
             model.addAttribute("error", e.getMessage());
-            return "formulario-editar-desarrollador-admin";
+            return "administrador/editarDesarrollador";
         }
     }
 

@@ -30,7 +30,7 @@ public class UsuarioController {
         }
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        return "cliente";
+        return "cliente/inicio";
     }
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
@@ -43,7 +43,7 @@ public class UsuarioController {
         }
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        return "admin";
+        return "administrador/inicio";
     }
 
     @GetMapping("/admin/usuarios")
@@ -72,7 +72,7 @@ public class UsuarioController {
         model.addAttribute("filtro", filtro);
         model.addAttribute("rolSeleccionado", rol);
 
-        return "usuarios-admin";
+        return "administrador/listadoDeUsuarios";
     }
 
     @GetMapping("/admin/usuarios/nuevo")
@@ -90,7 +90,7 @@ public class UsuarioController {
         model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
 
         // Muestra la vista con el formulario
-        return "usuario-nuevo";
+        return "administrador/nuevoUsuario";
     }
 
     @GetMapping("/admin/usuarios/editar/{id}")
@@ -106,7 +106,7 @@ public class UsuarioController {
         // Obtiene el usuario a editar y lo pasa a la vista
         Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
         model.addAttribute("usuario", usuario);
-        return "formulario-editar-usuario-admin";
+        return "administrador/editarUsuario";
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ public class UsuarioController {
             model.addAttribute("telefono", telefono);
             model.addAttribute("rol", rol);
             model.addAttribute("contrasenia", contrasenia);
-            return "usuario-nuevo";
+            return "administrador/nuevoUsuario";
         }
 
         // Verifica si ya existe un usuario con el mismo nombre y contraseña
@@ -149,7 +149,7 @@ public class UsuarioController {
             model.addAttribute("telefono", telefono);
             model.addAttribute("rol", rol);
             model.addAttribute("contrasenia", contrasenia);
-            return "usuario-nuevo";
+            return "administrador/nuevoUsuario";
         }
 
         // Crea el nuevo usuario y lo guarda
@@ -194,7 +194,7 @@ public class UsuarioController {
         if (usuarioExistente != null && !usuarioExistente.getId().equals(id)) {
             model.addAttribute("usuario", usuarioActualizado);
             model.addAttribute("error", "El email ya está siendo utilizado por otro usuario.");
-            return "formulario-editar-usuario-admin";
+            return "administrador/editarUsuario";
         }
 
         // Intenta actualizar el usuario
@@ -204,7 +204,7 @@ public class UsuarioController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("usuario", usuarioActualizado);
             model.addAttribute("error", e.getMessage());
-            return "formulario-editar-usuario-admin";
+            return "administrador/editarUsuario";
         }
     }
 

@@ -26,7 +26,7 @@ public class ProyectoController {
         verificarQueSeaAdministrador(usuario);
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        return "proyectos-admin";
+        return "administrador/listadoDeProyectos";
     }
 
     @GetMapping("/admin/proyectos/detalle")
@@ -36,7 +36,7 @@ public class ProyectoController {
         verificarQueSeaAdministrador(usuario);
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        return "detalle-proyecto-admin";
+        return "administrador/detalleProyecto";
     }
 
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
@@ -54,7 +54,7 @@ public class ProyectoController {
         List<Proyecto> proyectosCliente = proyectoService.obtenerProyectosPorIdCliente(usuario.getId());
         model.addAttribute("proyectos", proyectosCliente);
 
-        return "proyectos-cliente";
+        return "cliente/listadoDeProyectos";
     }
 
     @GetMapping("/cliente/proyectos/nuevo")
@@ -70,7 +70,7 @@ public class ProyectoController {
         // Agrega nombre del cliente a la vista
         model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        return "proyecto-nuevo";
+        return "cliente/nuevoProyecto";
     }
 
     @GetMapping("/cliente/proyectos/editar/{id}")
@@ -136,7 +136,7 @@ public class ProyectoController {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("nombreUsuario", usuario.getNombre());
             model.addAttribute("proyecto", proyectoService.obtenerProyectoPorId(id));
-            return "formulario-editar-proyecto-cliente";
+            return "cliente/editarProyecto";
         }
     }
 
