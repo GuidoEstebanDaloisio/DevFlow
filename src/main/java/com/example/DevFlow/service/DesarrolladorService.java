@@ -26,10 +26,6 @@ public class DesarrolladorService {
         return desarrolladorRepository.findById(id);
     }
 
-    public List<Desarrollador> obtenerTodos() {
-        return desarrolladorRepository.findAll();
-    }
-
     public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {
         // Obtener todos los desarrolladores del repositorio
         List<Desarrollador> todosLosDesarrolladores = desarrolladorRepository.findAll();
@@ -74,18 +70,7 @@ public class DesarrolladorService {
     public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
         return desarrolladorRepository.save(desarrollador);
     }
-
-    public Desarrollador actualizarDesarrollador(Long id, Desarrollador desarrolladorActualizado) {
-        return desarrolladorRepository.findById(id)
-                .map(desarrollador -> {
-                    desarrollador.setNombre(desarrolladorActualizado.getNombre());
-                    desarrollador.setHabilidades(desarrolladorActualizado.getHabilidades());
-                    desarrollador.setEstaDisponible(desarrolladorActualizado.getEstaDisponible());
-                    return desarrolladorRepository.save(desarrollador);
-                })
-                .orElse(null);
-    }
-
+    
     public void eliminarDesarrollador(Long id) {
         desarrolladorRepository.deleteById(id);
     }

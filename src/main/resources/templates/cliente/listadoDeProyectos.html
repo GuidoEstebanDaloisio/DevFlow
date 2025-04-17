@@ -30,11 +30,28 @@
                     <h3>📁 Mis Proyectos</h3>
                     <div>
                         <button onclick="window.location.href = '/cliente/proyectos/nuevo'" style="margin-right: 10px;">+ Solicitar nuevo proyecto</button>
-                        <input type="text" placeholder="🔍 Buscar por título o estado" style="padding: 5px;">
                     </div>
                 </div>
 
                 <br>
+
+                <!-- Filtros de búsqueda -->
+                <!-- Filtros de búsqueda -->
+                <form action="/cliente/proyectos" method="get" style="margin-bottom: 20px;">
+                    <input type="text" name="filtro" placeholder="Buscar por título..." th:value="${filtro}">
+                    <select name="estado">
+                        <option value="">Todos los estados</option>
+                        <option th:value="'ESPERANDO_REVISION'" th:selected="${estadoSeleccionado == 'ESPERANDO_REVISION'}">Esperando revisión</option>
+                        <option th:value="'APROBADO'" th:selected="${estadoSeleccionado == 'APROBADO'}">Aprobado</option>
+                        <option th:value="'RECHAZADO'" th:selected="${estadoSeleccionado == 'RECHAZADO'}">Rechazado</option>
+                        <option th:value="'EN_PROGRESO'" th:selected="${estadoSeleccionado == 'EN_PROGRESO'}">En progreso</option>
+                        <option th:value="'COMPLETADO'" th:selected="${estadoSeleccionado == 'COMPLETADO'}">Completado</option>
+                        <option th:value="'CANCELADO'" th:selected="${estadoSeleccionado == 'CANCELADO'}">Cancelado</option>
+                        <option th:value="'EN_PAUSA'" th:selected="${estadoSeleccionado == 'EN_PAUSA'}">En pausa</option>
+                    </select>
+                    <button type="submit">Buscar</button>
+                </form>
+
 
                 <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
                     <thead style="background-color: #f0f0f0;">
@@ -59,13 +76,13 @@
                             <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
                             <td th:text="${proyecto.medioEncargo}"></td>
                             <td>
-                                <!--  a th:href="@{/cliente/proyectos/detalle/{id}(id=${proyecto.id})}">👁 Ver Detalles</a>-->
                                 <a th:href="@{'/cliente/proyectos/editar/' + ${proyecto.id}}">✏️</a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </main>
+
         </div>
     </body>
 </html>

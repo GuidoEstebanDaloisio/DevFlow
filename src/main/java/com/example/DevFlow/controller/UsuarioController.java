@@ -22,27 +22,27 @@ public class UsuarioController {
 
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
     @GetMapping("/cliente")
-    public String vistaCliente(HttpSession session, Model model) {
+    public String verInicioCliente(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (usuario == null) {
-            return "redirect:/login"; // Si no hay sesión, redirige
+        if (noEsCliente(usuario)) {
+            return "redirect:/login";
         }
-
-        model.addAttribute("nombreUsuario", usuario.getNombre());
+        model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
+        
         return "cliente/inicio";
     }
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin")
-    public String vistaAdmin(HttpSession session, Model model) {
+    public String verInicioAdmin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (usuario == null) {
-            return "redirect:/login"; // Si no hay sesión, redirige
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
-
         model.addAttribute("nombreUsuario", usuario.getNombre());
+        
         return "administrador/inicio";
     }
 
@@ -51,12 +51,12 @@ public class UsuarioController {
             @RequestParam(required = false) String filtro,
             @RequestParam(required = false) String rol,
             Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
-
-
-        // Agrega el nombre al modelo
-        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
+        }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         List<Usuario> usuarios;
 
@@ -77,17 +77,12 @@ public class UsuarioController {
 
     @GetMapping("/admin/usuarios/nuevo")
     public String mostrarFormularioNuevoUsuario(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
-
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
-
-        // Agrega el nombre del usuario logueado al modelo
-        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         // Muestra la vista con el formulario
         return "administrador/nuevoUsuario";
@@ -95,17 +90,15 @@ public class UsuarioController {
 
     @GetMapping("/admin/usuarios/editar/{id}")
     public String mostrarFormularioEdicion(@PathVariable Long id, HttpSession session, Model model) {
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         // Obtiene el usuario a editar y lo pasa a la vista
-        Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
-        model.addAttribute("usuario", usuario);
+        Usuario usuarioEditable = usuarioService.obtenerUsuarioPorId(id);
+        model.addAttribute("usuario", usuarioEditable);
         return "administrador/editarUsuario";
     }
 
@@ -118,13 +111,10 @@ public class UsuarioController {
             @RequestParam String contrasenia,
             HttpSession session,
             Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
-
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         // Verifica si ya existe un usuario con el mismo email
@@ -162,15 +152,13 @@ public class UsuarioController {
 
     @GetMapping("/admin/usuarios/eliminar/{id}")
     public String eliminarUsuario(@PathVariable Long id, HttpSession session) {
-        usuarioService.eliminarUsuario(id);
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
-
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
+
+        usuarioService.eliminarUsuario(id);
 
         return "redirect:/admin/usuarios";
     }
@@ -181,12 +169,10 @@ public class UsuarioController {
             HttpSession session,
             Model model) {
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         // Verifica si el email ya está en uso por otro usuario
@@ -208,12 +194,13 @@ public class UsuarioController {
         }
     }
 
-    //-UTILES-----------------------------------------------------------------------------------------------    
-    private String verificarQueSeaAdministrador(Usuario usuario) {
-        if (usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR) {
-            return "redirect:/login";
-        }
-        return null;
+    //-UTILES-----------------------------------------------------------------------------------------------  
+    private boolean noEsCliente(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.CLIENTE;
+    }
+
+    private boolean noEsAdministrador(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR;
     }
 
 }

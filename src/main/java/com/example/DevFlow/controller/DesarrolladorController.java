@@ -20,20 +20,18 @@ public class DesarrolladorController {
 
     //-VISTAS-----------------------------------------------------------------------------------------------    
     @GetMapping("/admin/desarrolladores")
-    public String listarDesarrolladores(
+    public String verDesarrolladores(
             @RequestParam(required = false) String filtro,
             @RequestParam(required = false) String estado,
             Model model, HttpSession session) {
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
-        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         List<Desarrollador> desarrolladores;
 
@@ -42,7 +40,7 @@ public class DesarrolladorController {
 
         desarrolladores = hayFiltros
                 ? desarrolladorService.obtenerDesarrolladoresFiltrados(filtro, estado)
-                : desarrolladorService.obtenerTodos();
+                : desarrolladorService.obtenerDesarrolladores();
 
         // Agrega datos al modelo
         model.addAttribute("desarrolladores", desarrolladores);
@@ -54,16 +52,14 @@ public class DesarrolladorController {
 
     @GetMapping("/admin/desarrolladores/nuevo")
     public String mostrarFormularioNuevoDesarrollador(HttpSession session, Model model) {
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         // Agrega el nombre del usuario logueado al modelo
-        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         // Muestra la vista con el formulario
         return "administrador/nuevoDesarrollador";
@@ -71,12 +67,10 @@ public class DesarrolladorController {
 
     @GetMapping("/admin/desarrolladores/editar/{id}")
     public String mostrarFormularioEdicionDesarrollador(@PathVariable Long id, HttpSession session, Model model) {
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         Optional<Desarrollador> desarrolladorOptional = desarrolladorService.obtenerDesarrolladorPorId(id);
@@ -93,17 +87,13 @@ public class DesarrolladorController {
     public String crearDesarrollador(
             @RequestParam String nombre,
             @RequestParam String habilidades,
-            HttpSession session,
-            Model model) {
+            HttpSession session) {
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
-
         Desarrollador nuevo = new Desarrollador(nombre, habilidades);
 
         desarrolladorService.crearDesarrollador(nuevo);
@@ -115,12 +105,10 @@ public class DesarrolladorController {
     public String eliminarDesarrollador(@PathVariable Long id, HttpSession session) {
         desarrolladorService.eliminarDesarrollador(id);
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         return "redirect:/admin/desarrolladores";
@@ -132,12 +120,10 @@ public class DesarrolladorController {
             HttpSession session,
             Model model) {
 
-        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea administrador
-        String redireccion = verificarQueSeaAdministrador(usuarioSesion);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
         }
 
         try {
@@ -151,10 +137,7 @@ public class DesarrolladorController {
     }
 
     //-UTILES-----------------------------------------------------------------------------------------------    
-    private String verificarQueSeaAdministrador(Usuario usuario) {
-        if (usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR) {
-            return "redirect:/login";
-        }
-        return null;
+    private boolean noEsAdministrador(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR;
     }
 }

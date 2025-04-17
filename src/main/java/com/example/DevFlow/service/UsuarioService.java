@@ -1,9 +1,8 @@
 package com.example.DevFlow.service;
 
-import com.example.DevFlow.model.Desarrollador;
+import static com.example.DevFlow.model.MensajeError.*;
 import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
-import com.example.DevFlow.repository.DesarrolladorRepository;
 import com.example.DevFlow.repository.UsuarioRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +16,18 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-   
-    public List<Usuario> obtenerUsuarios() {
-        return usuarioRepository.findAll();
-    }
-
     public Usuario crearUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
+    public void eliminarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+    }
 
-    
+    public List<Usuario> obtenerUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
     public Usuario obtenerUsuarioPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
@@ -90,7 +90,7 @@ public class UsuarioService {
         // Validar si ya existe otro usuario con la misma combinación nombre + contraseña
         Optional<Usuario> existente = usuarioRepository.findByNombreAndContrasenia(nombreNuevo, nuevaContrasenia);
         if (existente.isPresent() && !existente.get().getId().equals(id)) {
-            throw new IllegalArgumentException("Ya existe otro usuario con ese nombre y contraseña.");
+            throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_NOMBRE_O_CONTRASENIA);
         }
 
         // Actualizar campos
@@ -107,7 +107,4 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
     }
 
-    public void eliminarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
-    }
 }

@@ -20,39 +20,53 @@ public class ProyectoController {
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin/proyectos")
-    public String vistaProyectos(HttpSession session, Model model) {
+    public String verProyectosComoAdmin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        verificarQueSeaAdministrador(usuario);
-
-        model.addAttribute("nombreUsuario", usuario.getNombre());
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
+        }
+        model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
+        
         return "administrador/listadoDeProyectos";
     }
 
     @GetMapping("/admin/proyectos/detalle")
-    public String vistaDetalleDeProyecto(HttpSession session, Model model) {
+    public String verDetalleDeProyectoComoAdmin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        verificarQueSeaAdministrador(usuario);
-
+        if (noEsAdministrador(usuario)) {
+            return "redirect:/login";
+        }
         model.addAttribute("nombreUsuario", usuario.getNombre());
+        
         return "administrador/detalleProyecto";
     }
 
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
     @GetMapping("/cliente/proyectos")
-    public String verProyectosComoCliente(HttpSession session, Model model) {
+    public String verProyectosComoCliente(
+            @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) String estado,
+            Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (usuario == null || usuario.getRol() != RolUsuario.CLIENTE) {
+        if (noEsCliente(usuario)) {
             return "redirect:/login";
         }
-
         model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        // Supone que tenés un servicio que trae los proyectos del cliente actual
-        List<Proyecto> proyectosCliente = proyectoService.obtenerProyectosPorIdCliente(usuario.getId());
-        model.addAttribute("proyectos", proyectosCliente);
+        List<Proyecto> proyectos;
+
+        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
+            proyectos = proyectoService.obtenerProyectosFiltradosParaCliente(usuario.getId(), filtro, estado);
+        } else {
+            proyectos = proyectoService.obtenerProyectosPorIdCliente(usuario.getId());
+        }
+
+        model.addAttribute("proyectos", proyectos);
+        model.addAttribute("filtro", filtro);
+        model.addAttribute("estadoSeleccionado", estado);
 
         return "cliente/listadoDeProyectos";
     }
@@ -61,13 +75,9 @@ public class ProyectoController {
     public String mostrarFormularioNuevoProyecto(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        // Verifica que sea cliente
-        String redireccion = verificarQueSeaCliente(usuario);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsCliente(usuario)) {
+            return "redirect:/login";
         }
-
-        // Agrega nombre del cliente a la vista
         model.addAttribute("nombreUsuario", usuario.getNombre());
 
         return "cliente/nuevoProyecto";
@@ -77,9 +87,8 @@ public class ProyectoController {
     public String mostrarFormularioEdicionCliente(@PathVariable Long id, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        String redireccion = verificarQueSeaCliente(usuario);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsCliente(usuario)) {
+            return "redirect:/login";
         }
 
         try {
@@ -101,10 +110,11 @@ public class ProyectoController {
             @RequestParam Double presupuesto,
             HttpSession session,
             Model model) {
-
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        verificarQueSeaCliente(usuario);
+        if (noEsCliente(usuario)) {
+            return "redirect:/login";
+        }
 
         Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, usuario);
         proyectoService.crearProyecto(nuevo);
@@ -121,12 +131,10 @@ public class ProyectoController {
             @RequestParam Double presupuesto,
             HttpSession session,
             Model model) {
-
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        String redireccion = verificarQueSeaCliente(usuario);
-        if (redireccion != null) {
-            return redireccion;
+        if (noEsCliente(usuario)) {
+            return "redirect:/login";
         }
 
         try {
@@ -141,17 +149,11 @@ public class ProyectoController {
     }
 
     //-UTILES-----------------------------------------------------------------------------------------------    
-    private String verificarQueSeaCliente(Usuario usuario) {
-        if (usuario == null || usuario.getRol() != RolUsuario.CLIENTE) {
-            return "redirect:/login";
-        }
-        return null;
+    private boolean noEsCliente(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.CLIENTE;
     }
 
-    private String verificarQueSeaAdministrador(Usuario usuario) {
-        if (usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR) {
-            return "redirect:/login";
-        }
-        return null;
+    private boolean noEsAdministrador(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR;
     }
 }
