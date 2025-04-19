@@ -16,6 +16,11 @@
             <input type="text" name="habilidades" th:value="${habilidades}" placeholder="Ej: Java, React, SQL" required>
         </label><br><br>
 
+        
+        <div th:if="${error}" style="color: red;">
+            <p th:text="${error}"></p>
+        </div>
+        
         <button type="submit">Guardar</button>
         <a href="/admin/desarrolladores"><button type="button">Cancelar</button></a>
     </form>

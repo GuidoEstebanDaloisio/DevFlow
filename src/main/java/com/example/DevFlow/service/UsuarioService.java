@@ -1,5 +1,6 @@
 package com.example.DevFlow.service;
 
+import com.example.DevFlow.model.MensajeError;
 import static com.example.DevFlow.model.MensajeError.*;
 import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
@@ -16,7 +17,11 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    MensajeError error;
+
     public Usuario crearUsuario(Usuario usuario) {
+        validarUsuarioParaCarga(usuario);
+
         return usuarioRepository.save(usuario);
     }
 
@@ -24,8 +29,44 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
+        Usuario usuario = obtenerUsuarioPorId(id);
+
+        String nombreNuevo = usuarioActualizado.getNombre();
+        String emailNuevo = usuarioActualizado.getEmail();
+        Long telefonoNuevo = usuarioActualizado.getTelefono();
+        RolUsuario rolNuevo = usuarioActualizado.getRol();
+        String nuevaContrasenia = usuarioActualizado.getContrasenia();
+
+        // Si no se escribe una nueva contraseña, se mantiene la actual
+        if (nuevaContrasenia == null || nuevaContrasenia.isBlank()) {
+            nuevaContrasenia = usuario.getContrasenia();
+        }
+
+        // Actualizar campos
+        usuario.setNombre(nombreNuevo);
+        usuario.setEmail(emailNuevo);
+        usuario.setTelefono(telefonoNuevo);
+        usuario.setRol(rolNuevo);
+        usuario.setContrasenia(nuevaContrasenia);
+
+        validarUsuarioParaActualizacion(usuario, id);
+
+        usuarioRepository.save(usuario);
+    }
+
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
+    }
+
+    public Usuario obtenerUsuarioPorId(Long id) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if (usuarioOptional.isEmpty()) {
+            throw new IllegalArgumentException(error.usuarioNoEncontradoPorId(id));
+        }
+
+        return usuarioOptional.get();
     }
 
     public Usuario obtenerUsuarioPorEmail(String email) {
@@ -73,38 +114,34 @@ public class UsuarioService {
         return usuariosFiltrados;
     }
 
-    public void actualizarUsuario(Long id, Usuario usuarioActualizado) {
-        Usuario usuario = obtenerUsuarioPorId(id);
-
-        String nombreNuevo = usuarioActualizado.getNombre();
-        String emailNuevo = usuarioActualizado.getEmail();
-        Long telefonoNuevo = usuarioActualizado.getTelefono();
-        RolUsuario rolNuevo = usuarioActualizado.getRol();
-        String nuevaContrasenia = usuarioActualizado.getContrasenia();
-
-        // Si no se escribe una nueva contraseña, se mantiene la actual
-        if (nuevaContrasenia == null || nuevaContrasenia.isBlank()) {
-            nuevaContrasenia = usuario.getContrasenia();
+    private void validarUsuarioParaCarga(Usuario usuario) {
+        // Verificar si ya existe un usuario con el mismo email
+        if (obtenerUsuarioPorEmail(usuario.getEmail()) != null) {
+            throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_MAIL);
         }
 
-        // Validar si ya existe otro usuario con la misma combinación nombre + contraseña
-        Optional<Usuario> existente = usuarioRepository.findByNombreAndContrasenia(nombreNuevo, nuevaContrasenia);
-        if (existente.isPresent() && !existente.get().getId().equals(id)) {
-            throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_NOMBRE_O_CONTRASENIA);
+        // Verificar si ya existe un usuario con el mismo nombre y contraseña
+        for (Usuario usu : obtenerUsuarios()) {
+            if (usu.getNombre().equalsIgnoreCase(usuario.getNombre())
+                    && usu.getContrasenia().equals(usuario.getContrasenia())) {
+                throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_NOMBRE_Y_CONTRASENIA);
+            }
+        }
+    }
+
+    private void validarUsuarioParaActualizacion(Usuario usuario, Long idAExcluir) { //Esta version añade un filtro para no tener en cuenta en la busqueda al usuario que estoy editando
+
+        if (obtenerUsuarioPorEmail(usuario.getEmail()) != null
+                && !obtenerUsuarioPorEmail(usuario.getEmail()).getId().equals(idAExcluir)) {
+            throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_MAIL);
         }
 
-        // Actualizar campos
-        usuario.setNombre(nombreNuevo);
-        usuario.setEmail(emailNuevo);
-        usuario.setTelefono(telefonoNuevo);
-        usuario.setRol(rolNuevo);
-        usuario.setContrasenia(nuevaContrasenia);
-
-        usuarioRepository.save(usuario);
+        for (Usuario usu : obtenerUsuarios()) {
+            if (!usu.getId().equals(idAExcluir)
+                    && usu.getNombre().equalsIgnoreCase(usuario.getNombre())
+                    && usu.getContrasenia().equals(usuario.getContrasenia())) {
+                throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_NOMBRE_Y_CONTRASENIA);
+            }
+        }
     }
-
-    public Usuario obtenerUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
-    }
-
 }

@@ -1,82 +1,83 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Usuarios - Administrador</title>
-</head>
-<body>
-    <!-- Encabezado -->
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-        <h2>DevFlow</h2>
-        <div>
-            <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
-            <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
-        </div>
-    </div>
-
-    <!-- Menú lateral + contenido -->
-    <div style="display: flex;">
-
-        <!-- Barra lateral -->
-        <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-            <ul style="list-style-type: none; padding: 0;">
-                <li>🏠 <a href="/admin">Inicio</a></li>
-                <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
-                <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
-                <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
-            </ul>
-        </nav>
-
-        <!-- Contenido principal -->
-        <div style="flex: 1; padding: 20px;">
-            <h2>👥 Usuarios</h2>
-
-            <!-- Filtros de búsqueda -->
-            <form action="/admin/usuarios" method="get" style="margin-bottom: 20px;">
-                <input type="text" name="filtro" placeholder="Buscar por nombre o email..." th:value="${filtro}">
-                <select name="rol">
-                    <option value="">Todos los roles</option>
-                    <option th:value="'ADMINISTRADOR'" th:selected="${rolSeleccionado == 'ADMINISTRADOR'}">Administrador</option>
-                    <option th:value="'GERENTE'" th:selected="${rolSeleccionado == 'GERENTE'}">Gerente</option>
-                    <option th:value="'CLIENTE'" th:selected="${rolSeleccionado == 'CLIENTE'}">Cliente</option>
-                </select>
-                <button type="submit">Buscar</button>
-            </form>
-
-            <!-- Tabla de usuarios -->
-            <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Rol</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="usu : ${usuarios}">
-                        <td th:text="${usu.id}"></td>
-                        <td th:text="${usu.nombre}"></td>
-                        <td th:text="${usu.email}"></td>
-                        <td th:text="${usu.telefono}"></td>
-                        <td th:text="${usu.rol}"></td>
-                        <td>
-                            <a th:href="@{'/admin/usuarios/editar/' + ${usu.id}}">✏️</a>
-                            <a th:href="@{'/admin/usuarios/eliminar/' + ${usu.id}}">🗑</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Botón para crear nuevo usuario -->
-            <div style="margin-top: 20px;">
-                <a href="/admin/usuarios/nuevo">
-                    <button>+ Crear nuevo usuario</button>
-                </a>
+    <head>
+        <meta charset="UTF-8">
+        <title>Usuarios - Administrador</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <h2>DevFlow</h2>
+            <div>
+                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
             </div>
         </div>
-    </div>
-</body>
+
+        <!-- Menú lateral + contenido -->
+        <div style="display: flex;">
+
+            <!-- Barra lateral -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="/admin">Inicio</a></li>
+                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <div style="flex: 1; padding: 20px;">
+                <h2>👥 Usuarios</h2>
+
+                <!-- Filtros de búsqueda -->
+                <form action="/admin/usuarios" method="get" style="margin-bottom: 20px;">
+                    <input type="text" name="filtro" placeholder="Buscar por nombre o email..." th:value="${filtro}">
+                    <select name="rol">
+                        <option value="">Todos los roles</option>
+                        <option th:value="'ADMINISTRADOR'" th:selected="${rolSeleccionado == 'ADMINISTRADOR'}">Administrador</option>
+                        <option th:value="'GERENTE'" th:selected="${rolSeleccionado == 'GERENTE'}">Gerente</option>
+                        <option th:value="'CLIENTE'" th:selected="${rolSeleccionado == 'CLIENTE'}">Cliente</option>
+                    </select>
+                    <button type="submit">Buscar</button>
+                </form>
+
+                <!-- Tabla de usuarios -->
+                <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usu : ${usuarios}">
+                            <td th:text="${usu.id}"></td>
+                            <td th:text="${usu.nombre}"></td>
+                            <td th:text="${usu.email}"></td>
+                            <td th:text="${usu.telefono}"></td>
+                            <td th:text="${usu.rol}"></td>
+                            <td>
+                                <a th:href="@{'/admin/usuarios/editar/' + ${usu.id}}">✏️</a>
+                                <a th:href="@{'/admin/usuarios/eliminar/' + ${usu.id}}">🗑</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Botón para crear nuevo usuario -->
+                <div style="margin-top: 20px;">
+                    <a href="/admin/usuarios/nuevo">
+                        <button>+ Crear nuevo usuario</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <script src="/js/alertas.js"></script>
+    </body>
 </html>

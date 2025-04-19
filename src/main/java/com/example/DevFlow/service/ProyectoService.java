@@ -1,6 +1,7 @@
 package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.*;
+import static com.example.DevFlow.model.MensajeError.*;
 import com.example.DevFlow.repository.ProyectoRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,22 +18,33 @@ public class ProyectoService {
     private MensajeError error;
 
     public Proyecto crearProyecto(Proyecto proyecto) {
+        // Verificar si el presupuesto es mayor a 0
         if (proyecto.getPresupuesto() == null || proyecto.getPresupuesto() <= 0) {
-            throw new IllegalArgumentException(error.PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
+            throw new IllegalArgumentException(PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
         }
         return proyectoRepository.save(proyecto);
     }
 
-    public List<Proyecto> obtenerProyectos() {
-        return proyectoRepository.findAll();
+    public void actualizarProyectoComoCliente(Long idProyecto, Usuario cliente, String titulo, String descripcion, String medioEncargo, Double presupuesto) {
+        if (presupuesto == null || presupuesto <= 0) {
+            throw new IllegalArgumentException(PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
+        }
+
+        Proyecto proyecto = obtenerProyectoPorId(idProyecto);
+
+        //Se vuelve a llamar a "validarPermisoDeEdicionCliente" porque en una aplicación web no se puede confiar en los datos del cliente (puede modificar el id en la URL, o incluso forzar un POST con un proyecto que no le pertenece)
+        validarPermisoDeEdicionCliente(proyecto, cliente);
+
+        proyecto.setTitulo(titulo);
+        proyecto.setDescripcion(descripcion);
+        proyecto.setMedioEncargo(medioEncargo);
+        proyecto.setPresupuesto(presupuesto);
+
+        proyectoRepository.save(proyecto);
     }
 
-    public Proyecto obtenerProyectoPorId(Long id) {
-        Optional<Proyecto> proyectoOptional = proyectoRepository.findById(id);
-        if (proyectoOptional.isEmpty()) {
-            throw new IllegalArgumentException(error.proyectoNoEncontradoPorId(id));
-        }
-        return proyectoOptional.get();
+    public List<Proyecto> obtenerProyectos() {
+        return proyectoRepository.findAll();
     }
 
     public List<Proyecto> obtenerProyectosPorIdCliente(Long idCliente) {
@@ -67,34 +79,30 @@ public class ProyectoService {
         return proyectosFiltrados;
     }
 
-    public void actualizarProyectoCliente(Long idProyecto, Usuario cliente, String titulo, String descripcion,
-            String medioEncargo, Double presupuesto) {
-
-        if (presupuesto == null || presupuesto <= 0) {
-            throw new IllegalArgumentException(error.PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
+    public Proyecto obtenerProyectoPorId(Long id) {
+        Optional<Proyecto> proyectoOptional = proyectoRepository.findById(id);
+        if (proyectoOptional.isEmpty()) {
+            throw new IllegalArgumentException(error.proyectoNoEncontradoPorId(id));
         }
-
-        Proyecto proyecto = validarEdicionProyectoPorCliente(idProyecto, cliente);
-
-        proyecto.setTitulo(titulo);
-        proyecto.setDescripcion(descripcion);
-        proyecto.setMedioEncargo(medioEncargo);
-        proyecto.setPresupuesto(presupuesto);
-
-        proyectoRepository.save(proyecto);
+        return proyectoOptional.get();
     }
 
-    public Proyecto validarEdicionProyectoPorCliente(Long idProyecto, Usuario cliente) {
+    public Proyecto obtenerProyectoParaEdicionPorCliente(Long idProyecto, Usuario cliente) {
         Proyecto proyecto = obtenerProyectoPorId(idProyecto);
 
-        if (!proyecto.getUsuario().getId().equals(cliente.getId())) {
-            throw new IllegalArgumentException(error.NO_TIENE_PERMISO_DE_EDITAR_PROYECTO);
-        }
-
-        if (proyecto.getEstadoAvance() != EstadoProyecto.ESPERANDO_REVISION) {
-            throw new IllegalArgumentException(error.NO_SE_PUEDE_EDITAR_PROYECTO_EN_ESTE_ESTADO);
-        }
+        validarPermisoDeEdicionCliente(proyecto, cliente);
 
         return proyecto;
     }
+
+    private void validarPermisoDeEdicionCliente(Proyecto proyecto, Usuario cliente) {
+        if (!proyecto.getUsuario().getId().equals(cliente.getId())) {
+            throw new IllegalArgumentException(NO_TIENE_PERMISO_DE_EDITAR_PROYECTO);
+        }
+
+        if (proyecto.getEstadoAvance() != EstadoProyecto.ESPERANDO_REVISION) {
+            throw new IllegalArgumentException(NO_SE_PUEDE_EDITAR_PROYECTO_EN_ESTE_ESTADO);
+        }
+    }
+
 }

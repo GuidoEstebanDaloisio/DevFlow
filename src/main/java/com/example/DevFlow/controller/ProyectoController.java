@@ -6,6 +6,8 @@ import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.service.ProyectoService;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +29,7 @@ public class ProyectoController {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
-        
+
         return "administrador/listadoDeProyectos";
     }
 
@@ -39,7 +41,7 @@ public class ProyectoController {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        
+
         return "administrador/detalleProyecto";
     }
 
@@ -78,7 +80,6 @@ public class ProyectoController {
         if (noEsCliente(usuario)) {
             return "redirect:/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         return "cliente/nuevoProyecto";
     }
@@ -92,12 +93,11 @@ public class ProyectoController {
         }
 
         try {
-            Proyecto proyecto = proyectoService.validarEdicionProyectoPorCliente(id, usuario); //Se vuelve a llamar a "validarEdicionProyectoPorCliente" al enviar el formulario, porque en una aplicación web no se puede confiar en los datos del cliente (puede modificar el id en la URL, o incluso forzar un POST con un proyecto que no le pertenece)
+            Proyecto proyecto = proyectoService.obtenerProyectoParaEdicionPorCliente(id, usuario);
             model.addAttribute("proyecto", proyecto);
-            model.addAttribute("nombreUsuario", usuario.getNombre());
             return "formulario-editar-proyecto-cliente";
         } catch (IllegalArgumentException e) {
-            return "redirect:/cliente/proyectos";
+            return "redirect:/cliente/proyectos?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
         }
     }
 
@@ -116,10 +116,19 @@ public class ProyectoController {
             return "redirect:/login";
         }
 
-        Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, usuario);
-        proyectoService.crearProyecto(nuevo);
+        try {
+            Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, usuario);
+            proyectoService.crearProyecto(nuevo);
+            return "redirect:/cliente/proyectos";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("descripcion", descripcion);
+            model.addAttribute("medio_encargo", medio_encargo);
+            model.addAttribute("presupuesto", presupuesto);
+            return "cliente/nuevoProyecto";
+        }
 
-        return "redirect:/cliente/proyectos";
     }
 
     @PostMapping("/cliente/proyectos/editar/{id}")
@@ -138,7 +147,7 @@ public class ProyectoController {
         }
 
         try {
-            proyectoService.actualizarProyectoCliente(id, usuario, titulo, descripcion, medioEncargo, presupuesto);
+            proyectoService.actualizarProyectoComoCliente(id, usuario, titulo, descripcion, medioEncargo, presupuesto);
             return "redirect:/cliente/proyectos";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

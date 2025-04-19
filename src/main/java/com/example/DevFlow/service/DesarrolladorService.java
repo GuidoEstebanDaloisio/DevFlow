@@ -2,6 +2,7 @@ package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.Desarrollador;
 import com.example.DevFlow.model.MensajeError;
+import static com.example.DevFlow.model.MensajeError.DESARROLLADOR_NO_EXISTE;
 import com.example.DevFlow.repository.DesarrolladorRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +18,38 @@ public class DesarrolladorService {
 
     private MensajeError error;
 
-    
+    public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
+        return desarrolladorRepository.save(desarrollador);
+    }
+
+    public void eliminarDesarrollador(Long id) {
+        desarrolladorRepository.deleteById(id);
+    }
+
+    public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
+        Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
+        if (desarrolladorOptional.isEmpty()) {
+            throw new IllegalArgumentException(DESARROLLADOR_NO_EXISTE);
+        }
+
+        Desarrollador desarrollador = desarrolladorOptional.get();
+        desarrollador.setNombre(nombre);
+        desarrollador.setHabilidades(habilidades);
+        desarrolladorRepository.save(desarrollador);
+    }
+
     public List<Desarrollador> obtenerDesarrolladores() {
         return desarrolladorRepository.findAll();
     }
 
-    public Optional<Desarrollador> obtenerDesarrolladorPorId(Long id) {
-        return desarrolladorRepository.findById(id);
+    public Desarrollador obtenerDesarrolladorPorId(Long id) {
+        Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
+
+        if (desarrolladorOptional.isEmpty()) {
+            throw new IllegalArgumentException(error.desarrolladorNoEncontradoPorId(id));
+        }
+
+        return desarrolladorOptional.get();
     }
 
     public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {
@@ -65,26 +91,6 @@ public class DesarrolladorService {
         }
 
         return desarrolladoresFiltrados;
-    }
-
-    public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
-        return desarrolladorRepository.save(desarrollador);
-    }
-    
-    public void eliminarDesarrollador(Long id) {
-        desarrolladorRepository.deleteById(id);
-    }
-
-    public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
-        Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
-        if (desarrolladorOptional.isEmpty()) {
-            throw new IllegalArgumentException(error.DESARROLLADOR_NO_EXISTE);
-        }
-
-        Desarrollador desarrollador = desarrolladorOptional.get();
-        desarrollador.setNombre(nombre);
-        desarrollador.setHabilidades(habilidades);
-        desarrolladorRepository.save(desarrollador);
     }
 
 }

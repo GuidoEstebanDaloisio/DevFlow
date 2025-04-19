@@ -5,6 +5,8 @@ import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.service.DesarrolladorService;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +60,6 @@ public class DesarrolladorController {
             return "redirect:/login";
         }
 
-        // Agrega el nombre del usuario logueado al modelo
-        model.addAttribute("nombreUsuario", usuario.getNombre());
-
         // Muestra la vista con el formulario
         return "administrador/nuevoDesarrollador";
     }
@@ -73,13 +72,13 @@ public class DesarrolladorController {
             return "redirect:/login";
         }
 
-        Optional<Desarrollador> desarrolladorOptional = desarrolladorService.obtenerDesarrolladorPorId(id);
-        if (desarrolladorOptional.isEmpty()) {
-            return "redirect:/admin/desarrolladores?error=No se encontró el desarrollador";
+        try {
+            Desarrollador desarrollador = desarrolladorService.obtenerDesarrolladorPorId(id);
+            model.addAttribute("desarrollador", desarrollador);
+            return "administrador/editarDesarrollador";
+        } catch (IllegalArgumentException e) {
+        return "redirect:/admin/desarrolladores?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
         }
-
-        model.addAttribute("desarrollador", desarrolladorOptional.get());
-        return "administrador/editarDesarrollador";
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------

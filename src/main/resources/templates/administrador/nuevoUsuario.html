@@ -16,10 +16,6 @@
             <input type="email" name="email" th:value="${email}" required>
         </label><br><br>
 
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
-        </div>
-
         <label>Teléfono:<br>
             <input type="text" name="telefono" th:value="${telefono}" required>
         </label><br><br>
@@ -36,6 +32,10 @@
             <input type="password" name="contrasenia" th:value="${contrasenia}" required>
         </label><br><br>
 
+        <div th:if="${error}" style="color: red;">
+            <p th:text="${error}"></p>
+        </div>
+        
         <button type="submit">Guardar</button>
         <a href="/admin/usuarios"><button type="button">Cancelar</button></a>
     </form>

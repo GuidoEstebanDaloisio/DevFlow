@@ -4,6 +4,8 @@ import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,7 +31,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
-        
+
         return "cliente/inicio";
     }
 
@@ -42,7 +44,7 @@ public class UsuarioController {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        
+
         return "administrador/inicio";
     }
 
@@ -82,7 +84,6 @@ public class UsuarioController {
         if (noEsAdministrador(usuario)) {
             return "redirect:/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         // Muestra la vista con el formulario
         return "administrador/nuevoUsuario";
@@ -96,30 +97,38 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
-        // Obtiene el usuario a editar y lo pasa a la vista
-        Usuario usuarioEditable = usuarioService.obtenerUsuarioPorId(id);
-        model.addAttribute("usuario", usuarioEditable);
-        return "administrador/editarUsuario";
+        try {
+            Usuario usuarioEditable = usuarioService.obtenerUsuarioPorId(id);
+            model.addAttribute("usuario", usuarioEditable);
+            return "administrador/editarUsuario";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/usuarios?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
+        }
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
     @PostMapping("/admin/usuarios/nuevo")
-    public String crearUsuario(@RequestParam String nombre,
+    public String crearUsuario(
+            @RequestParam String nombre,
             @RequestParam String email,
             @RequestParam Long telefono,
             @RequestParam RolUsuario rol,
             @RequestParam String contrasenia,
             HttpSession session,
             Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+
+        if (noEsAdministrador(usuarioSesion)) {
             return "redirect:/login";
         }
 
-        // Verifica si ya existe un usuario con el mismo email
-        if (usuarioService.obtenerUsuarioPorEmail(email) != null) {
-            model.addAttribute("error", "Ya existe un usuario con ese email.");
+        try {
+            Usuario nuevo = new Usuario(nombre, contrasenia, email, telefono, rol);
+            usuarioService.crearUsuario(nuevo);
+            return "redirect:/admin/usuarios";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("nombre", nombre);
             model.addAttribute("email", email);
             model.addAttribute("telefono", telefono);
@@ -127,27 +136,6 @@ public class UsuarioController {
             model.addAttribute("contrasenia", contrasenia);
             return "administrador/nuevoUsuario";
         }
-
-        // Verifica si ya existe un usuario con el mismo nombre y contraseña
-        boolean existeNombreYContrasenia = usuarioService.obtenerUsuarios().stream()
-                .anyMatch(u -> u.getNombre().equalsIgnoreCase(nombre) && u.getContrasenia().equals(contrasenia));
-
-        if (existeNombreYContrasenia) {
-            model.addAttribute("error", "Ya existe un usuario con ese nombre y contraseña.");
-            model.addAttribute("nombre", nombre);
-            model.addAttribute("email", email);
-            model.addAttribute("telefono", telefono);
-            model.addAttribute("rol", rol);
-            model.addAttribute("contrasenia", contrasenia);
-            return "administrador/nuevoUsuario";
-        }
-
-        // Crea el nuevo usuario y lo guarda
-        Usuario nuevo = new Usuario(nombre, contrasenia, email, telefono, rol);
-        usuarioService.crearUsuario(nuevo);
-
-        // Redirige a la vista de usuarios
-        return "redirect:/admin/usuarios";
     }
 
     @GetMapping("/admin/usuarios/eliminar/{id}")
@@ -173,14 +161,6 @@ public class UsuarioController {
 
         if (noEsAdministrador(usuario)) {
             return "redirect:/login";
-        }
-
-        // Verifica si el email ya está en uso por otro usuario
-        Usuario usuarioExistente = usuarioService.obtenerUsuarioPorEmail(usuarioActualizado.getEmail());
-        if (usuarioExistente != null && !usuarioExistente.getId().equals(id)) {
-            model.addAttribute("usuario", usuarioActualizado);
-            model.addAttribute("error", "El email ya está siendo utilizado por otro usuario.");
-            return "administrador/editarUsuario";
         }
 
         // Intenta actualizar el usuario
