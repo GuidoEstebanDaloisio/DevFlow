@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel de Gerente - DevFlow</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <h2>DevFlow</h2>
+            <div>
+                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <!-- Contenedor principal -->
+        <div style="display: flex; height: 90vh;">
+
+            <!-- Barra lateral -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <main style="flex: 1; padding: 30px;">
+                <h3>📊 Resumen rápido:</h3>
+                <ul>
+                    <li>🕒 5 Proyectos en espera de revisión</li>
+                    <li>🚧 7 Proyectos en curso</li>
+                    <li>❌ 2 Proyectos rechazados</li>
+                </ul>
+            </main>
+        </div>
+    </body>
+</html>

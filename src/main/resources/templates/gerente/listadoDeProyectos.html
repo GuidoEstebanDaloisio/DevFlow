@@ -2,42 +2,44 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Mis Proyectos - DevFlow</title>
+        <title>Listado de Proyectos - DevFlow</title>
     </head>
     <body>
         <!-- Encabezado -->
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
             <h2>DevFlow</h2>
             <div>
-                <span>Cliente: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
                 <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
             </div>
         </div>
 
         <!-- Contenedor principal -->
         <div style="display: flex; height: 90vh;">
+
             <!-- Barra lateral -->
             <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
                 <ul style="list-style-type: none; padding: 0;">
-                    <li>🏠 <a href="/cliente">Inicio</a></li>
-                    <li>📁 <a href="/cliente/proyectos">Mis Proyectos</a></li>
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
 
             <!-- Contenido principal -->
             <main style="flex: 1; padding: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>📁 Mis Proyectos</h3>
+                    <h3>📁 Listado de Proyectos</h3>
                     <div>
-                        <button onclick="window.location.href = '/cliente/proyectos/nuevo'" style="margin-right: 10px;">+ Solicitar nuevo proyecto</button>
+                        <button onclick="window.location.href = '/gerente/proyectos/nuevo'" style="margin-right: 10px;">+ Solicitar nuevo proyecto</button>
                     </div>
                 </div>
 
                 <br>
 
                 <!-- Filtros de búsqueda -->
-                <form action="/cliente/proyectos" method="get" style="margin-bottom: 20px;">
-                    <input type="text" name="filtro" placeholder="Buscar por título..." th:value="${filtro}">
+                <form action="/gerente/proyectos" method="get" style="margin-bottom: 20px;">
+                    <input type="text" name="filtro" placeholder="Buscar por título o solicitante..." th:value="${filtro}">
                     <select name="estado">
                         <option value="">Todos los estados</option>
                         <option th:value="'ESPERANDO_REVISION'" th:selected="${estadoSeleccionado == 'ESPERANDO_REVISION'}">Esperando revisión</option>
@@ -51,18 +53,17 @@
                     <button type="submit">Buscar</button>
                 </form>
 
-
                 <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
                     <thead style="background-color: #f0f0f0;">
                         <tr>
                             <th>ID</th>
                             <th>Título</th>
-                            <th>Estado de avance</th>
-                            <th>Fecha de inicio</th>
-                            <th>Fecha de finalización</th>
+                            <th>Estado</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
                             <th>Presupuesto</th>
-                            <th>Medio de encargo</th>
-                            <th>Acción</th>
+                            <th>Solicitante</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,9 +74,10 @@
                             <td th:text="${proyecto.fechaInicio != null ? #dates.format(proyecto.fechaInicio, 'dd/MM/yyyy') : '--'}"></td>
                             <td th:text="${proyecto.fechaFinalizacion != null ? #dates.format(proyecto.fechaFinalizacion, 'dd/MM/yyyy') : '--'}"></td>
                             <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
-                            <td th:text="${proyecto.medioEncargo}"></td>
+                            <td th:text="${proyecto.usuario.nombre}"></td>
                             <td>
-                                <a th:href="@{'/cliente/proyectos/detalle/' + ${proyecto.id}}">👁️</a>
+                                <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
+                                <a th:href="@{'/gerente/proyectos/eliminar/' + ${proyecto.id}}">🗑</a>
                             </td>
                         </tr>
                     </tbody>

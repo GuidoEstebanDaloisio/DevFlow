@@ -3,6 +3,7 @@ package com.example.DevFlow.service;
 import com.example.DevFlow.model.Desarrollador;
 import com.example.DevFlow.model.MensajeError;
 import static com.example.DevFlow.model.MensajeError.DESARROLLADOR_NO_EXISTE;
+import com.example.DevFlow.model.Proyecto;
 import com.example.DevFlow.repository.DesarrolladorRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,19 @@ public class DesarrolladorService {
         }
 
         return desarrolladorOptional.get();
+    }
+
+    public List<Desarrollador> obtenerPorProyecto(Proyecto proyecto) {
+        List<Desarrollador> todos = obtenerDesarrolladores();
+        List<Desarrollador> asignados = new ArrayList<>();
+
+        for (Desarrollador dev : todos) {
+            if (dev.getProyecto() != null && dev.getProyecto().getId().equals(proyecto.getId())) {
+                asignados.add(dev);
+            }
+        }
+
+        return asignados;
     }
 
     public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {

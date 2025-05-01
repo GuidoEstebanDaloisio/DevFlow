@@ -4,6 +4,7 @@ import com.example.DevFlow.model.*;
 import static com.example.DevFlow.model.MensajeError.*;
 import com.example.DevFlow.repository.ProyectoRepository;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +26,26 @@ public class ProyectoService {
         return proyectoRepository.save(proyecto);
     }
 
-    public void actualizarProyectoComoCliente(Long idProyecto, Usuario cliente, String titulo, String descripcion, String medioEncargo, Double presupuesto) {
-        if (presupuesto == null || presupuesto <= 0) {
-            throw new IllegalArgumentException(PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
+    public void eliminarProyecto(Long id) {
+        proyectoRepository.deleteById(id);
+    }
+    
+    public void actualizarProyecto(Long id, Proyecto actualizado) {
+        Proyecto existente = obtenerProyectoPorId(id);
+
+        if (existente == null) {
+            throw new IllegalArgumentException("Proyecto no encontrado.");
         }
 
-        Proyecto proyecto = obtenerProyectoPorId(idProyecto);
+        existente.setTitulo(actualizado.getTitulo());
+        existente.setDescripcion(actualizado.getDescripcion());
+        existente.setMedioEncargo(actualizado.getMedioEncargo());
+        existente.setPresupuesto(actualizado.getPresupuesto());
+        existente.setEstadoAvance(actualizado.getEstadoAvance());
+        existente.setFechaInicio(actualizado.getFechaInicio());
+        existente.setFechaFinalizacion(actualizado.getFechaFinalizacion());
 
-        //Se vuelve a llamar a "validarPermisoDeEdicionCliente" porque en una aplicación web no se puede confiar en los datos del cliente (puede modificar el id en la URL, o incluso forzar un POST con un proyecto que no le pertenece)
-        validarPermisoDeEdicionCliente(proyecto, cliente);
-
-        proyecto.setTitulo(titulo);
-        proyecto.setDescripcion(descripcion);
-        proyecto.setMedioEncargo(medioEncargo);
-        proyecto.setPresupuesto(presupuesto);
-
-        proyectoRepository.save(proyecto);
+        proyectoRepository.save(existente);
     }
 
     public List<Proyecto> obtenerProyectos() {
@@ -79,6 +84,33 @@ public class ProyectoService {
         return proyectosFiltrados;
     }
 
+    public List<Proyecto> obtenerProyectosFiltradosParaGerente(String filtro, String estado) {
+        List<Proyecto> todosLosProyectos = obtenerProyectos();
+
+        List<Proyecto> proyectosFiltrados = new ArrayList<>();
+
+        for (Proyecto proyecto : todosLosProyectos) {
+            boolean coincideConFiltro = true;
+            boolean coincideConEstado = true;
+
+            if (filtro != null && !filtro.isBlank()) {
+                String filtroMinuscula = filtro.toLowerCase();
+                coincideConFiltro = (proyecto.getTitulo() != null && proyecto.getTitulo().toLowerCase().contains(filtroMinuscula))
+                        || (proyecto.getUsuario().getNombre() != null && proyecto.getUsuario().getNombre().toLowerCase().contains(filtroMinuscula));
+            }
+
+            if (estado != null && !estado.isBlank()) {
+                coincideConEstado = proyecto.getEstadoAvance() != null && proyecto.getEstadoAvance().name().equalsIgnoreCase(estado);
+            }
+
+            if (coincideConFiltro && coincideConEstado) {
+                proyectosFiltrados.add(proyecto);
+            }
+        }
+
+        return proyectosFiltrados;
+    }
+
     public Proyecto obtenerProyectoPorId(Long id) {
         Optional<Proyecto> proyectoOptional = proyectoRepository.findById(id);
         if (proyectoOptional.isEmpty()) {
@@ -105,4 +137,79 @@ public class ProyectoService {
         }
     }
 
+    public void cambiarEstado(Proyecto proyecto, EstadoProyecto nuevoEstado) {
+        if (proyecto == null) {
+            throw new IllegalArgumentException("El proyecto no existe.");
+        }
+
+        switch (nuevoEstado) {
+            case APROBADO:
+                if (proyecto.puedeAprobarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.APROBADO);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede ser aprobado.");
+                }
+                break;
+            case RECHAZADO:
+                if (proyecto.puedeRechazarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.RECHAZADO);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede ser rechazado.");
+                }
+                break;
+            case CANCELADO:
+                if (proyecto.puedeCancelarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.CANCELADO);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede ser cancelado.");
+                }
+                break;
+            case EN_PROGRESO:
+                if (proyecto.puedeDesarrollarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.EN_PROGRESO);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede comenzar.");
+                }
+                break;
+            case COMPLETADO:
+                if (proyecto.puedeFinalizarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.COMPLETADO);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede finalizarse.");
+                }
+                break;
+            case EN_PAUSA:
+                if (proyecto.puedePausarse()) {
+                    proyecto.setEstadoAvance(EstadoProyecto.EN_PAUSA);
+                } else {
+                    throw new IllegalArgumentException("El proyecto no puede pausarse.");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Estado de proyecto no reconocido.");
+        }
+
+        // Finalmente, guardamos el proyecto actualizado en la base de datos
+        proyectoRepository.save(proyecto);
+    }
+
+    
+    
+    public void establecerFechaInicio(Long idProyecto, Date fechaInicio) {
+        Proyecto proyecto = proyectoRepository.findById(idProyecto)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+
+        proyecto.setFechaInicio(fechaInicio);
+        proyectoRepository.save(proyecto);
+    }
+    
+    public void establecerFechaFin(Long idProyecto, Date fechaFin) {
+        Proyecto proyecto = proyectoRepository.findById(idProyecto)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+
+        proyecto.setFechaFinalizacion(fechaFin);
+        proyectoRepository.save(proyecto);
+    }
+
+    
 }

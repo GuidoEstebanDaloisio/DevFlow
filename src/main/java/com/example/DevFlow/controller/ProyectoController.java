@@ -1,15 +1,21 @@
 package com.example.DevFlow.controller;
 
+import com.example.DevFlow.model.Desarrollador;
 import com.example.DevFlow.model.EstadoProyecto;
 import com.example.DevFlow.model.Proyecto;
 import com.example.DevFlow.model.RolUsuario;
+import static com.example.DevFlow.model.RolUsuario.*;
 import com.example.DevFlow.model.Usuario;
+import com.example.DevFlow.service.DesarrolladorService;
 import com.example.DevFlow.service.ProyectoService;
+import com.example.DevFlow.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +25,12 @@ public class ProyectoController {
 
     @Autowired
     private ProyectoService proyectoService;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private DesarrolladorService desarrolladorService;
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin/proyectos")
@@ -73,93 +85,225 @@ public class ProyectoController {
         return "cliente/listadoDeProyectos";
     }
 
-    @GetMapping("/cliente/proyectos/nuevo")
+    //-VISTAS GERENTE---------------------------------------------------------------------------------------    
+    @GetMapping("/gerente/proyectos")
+    public String verProyectosComoGerente(
+            @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) String estado,
+            Model model, HttpSession session) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+
+        List<Proyecto> proyectos;
+
+        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
+            proyectos = proyectoService.obtenerProyectosFiltradosParaGerente(filtro, estado);
+        } else {
+            proyectos = proyectoService.obtenerProyectos();
+        }
+
+        model.addAttribute("proyectos", proyectos);
+        model.addAttribute("filtro", filtro);
+        model.addAttribute("estadoSeleccionado", estado);
+
+        return "gerente/listadoDeProyectos";
+    }
+
+    @GetMapping("/gerente/proyectos/nuevo")
     public String mostrarFormularioNuevoProyecto(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsCliente(usuario)) {
+        if (noEsGerente(usuario)) {
             return "redirect:/login";
         }
 
-        return "cliente/nuevoProyecto";
+        List<Usuario> clientes = usuarioService.obtenerUsuariosPorRol(CLIENTE);
+        model.addAttribute("clientes", clientes);
+
+        return "gerente/nuevoProyecto";
     }
 
-    @GetMapping("/cliente/proyectos/editar/{id}")
-    public String mostrarFormularioEdicionCliente(@PathVariable Long id, HttpSession session, Model model) {
+    @GetMapping("/gerente/proyectos/detalles/{id}")
+    public String verDetallesProyecto(@PathVariable Long id, Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsCliente(usuario)) {
+        if (noEsGerente(usuario)) {
             return "redirect:/login";
         }
 
-        try {
-            Proyecto proyecto = proyectoService.obtenerProyectoParaEdicionPorCliente(id, usuario);
-            model.addAttribute("proyecto", proyecto);
-            return "formulario-editar-proyecto-cliente";
-        } catch (IllegalArgumentException e) {
-            return "redirect:/cliente/proyectos?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+        List<Desarrollador> desarrolladoresAsignados = desarrolladorService.obtenerPorProyecto(proyecto);
+
+        model.addAttribute("proyecto", proyecto);
+        model.addAttribute("desarrolladoresAsignados", desarrolladoresAsignados);
+
+        return "gerente/detallesProyecto";
+    }
+
+    @GetMapping("/gerente/proyectos/editar/{id}")
+    public String mostrarFormularioEditarProyecto(@PathVariable Long id, Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
         }
+
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+        EstadoProyecto[] estados = EstadoProyecto.values();
+
+        model.addAttribute("proyecto", proyecto);
+        model.addAttribute("estadosProyecto", estados);
+
+        return "gerente/editarProyecto";
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
-    @PostMapping("/cliente/proyectos/nuevo")
+    @PostMapping("/gerente/proyectos/nuevo")
     public String crearProyecto(
             @RequestParam String titulo,
             @RequestParam String descripcion,
             @RequestParam String medio_encargo,
             @RequestParam Double presupuesto,
+            @RequestParam Long clienteId,
             HttpSession session,
             Model model) {
+
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsCliente(usuario)) {
+        if (noEsGerente(usuario)) {
             return "redirect:/login";
         }
 
         try {
-            Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, usuario);
+            Usuario cliente = usuarioService.obtenerUsuarioPorId(clienteId);
+            Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, cliente);
             proyectoService.crearProyecto(nuevo);
-            return "redirect:/cliente/proyectos";
+            return "redirect:/gerente/proyectos";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("titulo", titulo);
             model.addAttribute("descripcion", descripcion);
             model.addAttribute("medio_encargo", medio_encargo);
             model.addAttribute("presupuesto", presupuesto);
-            return "cliente/nuevoProyecto";
-        }
 
+            // Volvemos a cargar la lista de clientes para el select del formulario
+            List<Usuario> clientes = usuarioService.obtenerUsuariosPorRol(CLIENTE);
+            model.addAttribute("clientes", clientes);
+
+            return "gerente/nuevoProyecto";
+        }
     }
 
-    @PostMapping("/cliente/proyectos/editar/{id}")
-    public String actualizarProyectoComoCliente(
-            @PathVariable Long id,
-            @RequestParam String titulo,
-            @RequestParam String descripcion,
-            @RequestParam String medioEncargo,
-            @RequestParam Double presupuesto,
-            HttpSession session,
-            Model model) {
+    @PostMapping("/gerente/proyectos/detalles/{id}")
+    public String cambiarEstadoProyecto(@PathVariable Long id,
+            @RequestParam EstadoProyecto nuevoEstado,
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsCliente(usuario)) {
+        if (noEsGerente(usuario)) {
             return "redirect:/login";
         }
 
         try {
-            proyectoService.actualizarProyectoComoCliente(id, usuario, titulo, descripcion, medioEncargo, presupuesto);
-            return "redirect:/cliente/proyectos";
+            Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+            proyectoService.cambiarEstado(proyecto, nuevoEstado);
+            return "redirect:/gerente/proyectos/detalles/{id}";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/gerente/proyectos/detalles/" + id + "?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
+    @PostMapping("/gerente/proyectos/detalles/{id}/guardar-fecha")
+    public String guardarFechaInicio(
+            @PathVariable Long id,
+            @RequestParam("fechaInicio")
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaInicio) {
+
+        // 1) Obtengo el proyecto
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+
+        // 2) Guardo la fecha de inicio
+        proyectoService.establecerFechaInicio(id, fechaInicio);
+
+        // 3) Cambio el estado a EN_PROGRESO
+        proyectoService.cambiarEstado(proyecto, EstadoProyecto.EN_PROGRESO);
+
+        // 4) Redirijo a la página de detalles
+        return "redirect:/gerente/proyectos/detalles/" + id;
+    }
+    
+    @PostMapping("/gerente/proyectos/detalles/{id}/guardar-fecha-final")
+    public String guardarFechaFin(
+            @PathVariable Long id,
+            @RequestParam("fechaFin")
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaFin) {
+
+        // 1) Obtengo el proyecto
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+
+        // 2) Guardo la fecha de fin
+        proyectoService.establecerFechaFin(id, fechaFin);
+
+        // 3) Cambio el estado a COMPLETADO
+        proyectoService.cambiarEstado(proyecto, EstadoProyecto.COMPLETADO);
+
+        // 4) Redirijo a la página de detalles
+        return "redirect:/gerente/proyectos/detalles/" + id;
+    }
+    
+    
+    @GetMapping("/gerente/proyectos/eliminar/{id}")
+    public String eliminarProyecto(@PathVariable Long id, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
+        }
+
+        proyectoService.eliminarProyecto(id);
+
+        return "redirect:/gerente/proyectos";
+    }
+    
+    
+    
+    
+    @PostMapping("/gerente/proyectos/editar/{id}")
+    public String editarProyecto(@PathVariable Long id,
+            @ModelAttribute Proyecto proyectoActualizado,
+            Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
+        }
+
+        try {
+            proyectoService.actualizarProyecto(id, proyectoActualizado);
+            return "redirect:/gerente/proyectos/" + id;
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("nombreUsuario", usuario.getNombre());
-            model.addAttribute("proyecto", proyectoService.obtenerProyectoPorId(id));
-            return "cliente/editarProyecto";
+            EstadoProyecto[] estados = EstadoProyecto.values();
+            model.addAttribute("estadosProyecto", estados);
+            model.addAttribute("proyecto", proyectoActualizado);
+            return "gerente/editarProyecto";
         }
     }
 
     //-UTILES-----------------------------------------------------------------------------------------------    
     private boolean noEsCliente(Usuario usuario) {
         return usuario == null || usuario.getRol() != RolUsuario.CLIENTE;
+    }
+
+    private boolean noEsGerente(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.GERENTE;
     }
 
     private boolean noEsAdministrador(Usuario usuario) {

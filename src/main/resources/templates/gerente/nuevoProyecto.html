@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Nuevo Proyecto - DevFlow</title>
+    </head>
+    <body>
+        <h2>Nuevo Proyecto</h2>
+
+        <form th:action="@{/gerente/proyectos/nuevo}" method="post">
+            <label>Título:</label>
+            <input type="text" name="titulo" required><br><br>
+
+            <label>Descripción:</label>
+            <textarea name="descripcion" rows="4" cols="50" required></textarea><br><br>
+
+            <label>Medio de Encargo:</label>
+            <input type="text" name="medio_encargo" required><br><br>
+
+            <label>Presupuesto:</label>
+            <input type="number" name="presupuesto" step="0.01" required><br><br>
+
+            <label>Cliente:</label>
+            <select name="clienteId" required>
+                <option value="">-- Seleccionar Cliente --</option>
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.id}"
+                        th:text="${cliente.nombre}"></option>
+            </select><br><br>
+
+            <button type="submit">Crear Proyecto</button>
+            <a href="/gerente/proyectos"><button type="button">Cancelar</button></a>
+        </form>
+    </body>
+</html>

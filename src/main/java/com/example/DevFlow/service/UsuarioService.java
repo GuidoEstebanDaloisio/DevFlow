@@ -3,6 +3,7 @@ package com.example.DevFlow.service;
 import com.example.DevFlow.model.MensajeError;
 import static com.example.DevFlow.model.MensajeError.*;
 import com.example.DevFlow.model.RolUsuario;
+import static com.example.DevFlow.model.RolUsuario.CLIENTE;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.repository.UsuarioRepository;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class UsuarioService {
 
     MensajeError error;
 
+    RolUsuario rol;
+
+    
     public Usuario crearUsuario(Usuario usuario) {
         validarUsuarioParaCarga(usuario);
 
@@ -58,6 +62,14 @@ public class UsuarioService {
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
     }
+    
+    public List<Usuario> obtenerClientes() {
+        return obtenerUsuariosPorRol(CLIENTE);
+    }
+    
+    public List<Usuario> obtenerClientesFiltrados(String filtro) {
+        return obtenerUsuariosFiltrados(filtro, rol.CLIENTE.toString());
+    }
 
     public Usuario obtenerUsuarioPorId(Long id) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
@@ -75,6 +87,19 @@ public class UsuarioService {
 
     public Usuario obtenerUsuarioPorNombre(String nombre) {
         return usuarioRepository.findByNombre(nombre);
+    }
+
+    public List<Usuario> obtenerUsuariosPorRol(RolUsuario rol) {
+        List<Usuario> todosLosUsuarios = obtenerUsuarios();
+        List<Usuario> usuariosFiltrados = new ArrayList<>();
+
+        for (Usuario usuario : todosLosUsuarios) {
+            if (usuario.getRol() != null && usuario.getRol() == rol) {
+                usuariosFiltrados.add(usuario);
+            }
+        }
+
+        return usuariosFiltrados;
     }
 
     public List<Usuario> obtenerUsuariosFiltrados(String filtro, String rol) {

@@ -13,8 +13,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Transient;
 import java.util.Date;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity(name = "Proyecto")
 public class Proyecto {
@@ -41,9 +43,11 @@ public class Proyecto {
     @Column(name = "medio_encargo", nullable = false, columnDefinition = "TEXT")
     private String medioEncargo;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fecha_inicio")
     private Date fechaInicio;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fecha_finalizacion")
     private Date fechaFinalizacion;
 
@@ -153,6 +157,34 @@ public class Proyecto {
 
     public void setDesarrolladores(List<Desarrollador> desarrolladores) {
         this.desarrolladores = desarrolladores;
+    }
+    
+    public boolean puedeVolverARevision() {
+        return false;
+    }
+
+    public boolean puedeAprobarse() {
+        return estadoAvance == EstadoProyecto.ESPERANDO_REVISION;
+    }
+
+    public boolean puedeRechazarse() {
+        return estadoAvance == EstadoProyecto.ESPERANDO_REVISION;
+    }
+
+    public boolean puedeCancelarse() {
+        return estadoAvance == EstadoProyecto.EN_PROGRESO || estadoAvance == EstadoProyecto.EN_PAUSA;
+    }
+
+    public boolean puedeDesarrollarse() {
+        return estadoAvance == EstadoProyecto.APROBADO || estadoAvance == EstadoProyecto.EN_PAUSA;
+    }
+
+    public boolean puedeFinalizarse() {
+        return estadoAvance == EstadoProyecto.EN_PROGRESO;
+    }
+
+    public boolean puedePausarse() {
+        return estadoAvance == EstadoProyecto.EN_PROGRESO;
     }
 
 }

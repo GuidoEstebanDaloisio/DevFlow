@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Listado de Proyectos - DevFlow</title>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+            <h2>DevFlow</h2>
+            <div>
+                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <!-- Contenedor principal -->
+        <div style="display: flex; height: 90vh;">
+
+            <!-- Barra lateral -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                </ul>
+            </nav>
+
+            <!-- Contenido principal -->
+            <div style="flex: 1; padding: 20px;">
+                <h2>👥 Usuarios</h2>
+
+                <!-- Filtros de búsqueda -->
+                <form action="/gerente/usuarios" method="get" style="margin-bottom: 20px;">
+                    <input type="text" name="filtro" placeholder="Buscar por nombre o email..." th:value="${filtro}">
+                    <button type="submit">Buscar</button>
+                </form>
+
+                <!-- Tabla de usuarios -->
+                <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usu : ${usuarios}">
+                            <td th:text="${usu.id}"></td>
+                            <td th:text="${usu.nombre}"></td>
+                            <td th:text="${usu.email}"></td>
+                            <td th:text="${usu.telefono}"></td>
+                            <td th:text="${usu.rol}"></td>
+                            <td>
+                                <a th:href="@{'/gerente/clientes/detalles/' + ${usu.id}}">👁️</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="/js/alertas.js"></script>
+    </body>
+</html>

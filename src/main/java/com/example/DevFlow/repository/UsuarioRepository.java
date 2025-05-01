@@ -1,5 +1,6 @@
 package com.example.DevFlow.repository;
 
+import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

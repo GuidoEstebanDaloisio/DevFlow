@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Editar Proyecto</title>
+    </head>
+    <body>
+        <h2>✏️ Editar Proyecto</h2>
+
+        <div th:if="${error}" style="color: red;">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{'/gerente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" method="post">
+    <label for="estadoAvance">Estado de Avance:</label>
+    <select id="estadoAvance" th:field="*{estadoAvance}" onchange="mostrarCampos()">
+        <!-- Opciones cargadas dinámicamente por JavaScript -->
+    </select><br><br>
+
+    <div id="fechaInicioDiv" style="display: none;">
+        <label for="fechaInicio">Fecha de Inicio:</label>
+        <input type="date" id="fechaInicio" th:field="*{fechaInicio}"><br><br>
+    </div>
+
+    <div id="fechaFinalizacionDiv" style="display: none;">
+        <label for="fechaFinalizacion">Fecha de Finalización:</label>
+        <input type="date" id="fechaFinalizacion" th:field="*{fechaFinalizacion}"><br><br>
+    </div>
+
+    <label for="presupuesto">Presupuesto:</label>
+    <input type="number" id="presupuesto" th:field="*{presupuesto}"><br><br>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+
+<script>
+    const estadoActual = /*[[${proyecto.estadoAvance}]]*/ 'EN_REVISION';
+    const estadoSelect = document.getElementById("estadoAvance");
+    const presupuestoInput = document.getElementById("presupuesto");
+    const fechaInicioDiv = document.getElementById("fechaInicioDiv");
+    const fechaFinalizacionDiv = document.getElementById("fechaFinalizacionDiv");
+
+    const opcionesPorEstado = {
+        'EN_REVISION': ['APROBADO', 'RECHAZADO'],
+        'APROBADO': ['APROBADO', 'CANCELADO'],
+        'EN_PROGRESO': ['EN_PROGRESO', 'COMPLETADO', 'EN_PAUSA', 'CANCELADO'],
+        'EN_PAUSA': ['EN_PAUSA', 'EN_PROGRESO'],
+        'RECHAZADO': ['RECHAZADO'],
+        'COMPLETADO': ['COMPLETADO'],
+        'CANCELADO': ['CANCELADO']
+    };
+
+    const opcionesTexto = {
+        'APROBADO': 'Aprobado',
+        'RECHAZADO': 'Rechazado',
+        'EN_REVISION': 'En revisión',
+        'EN_PROGRESO': 'En progreso',
+        'EN_PAUSA': 'En pausa',
+        'COMPLETADO': 'Completado',
+        'CANCELADO': 'Cancelado'
+    };
+
+    function cargarOpciones() {
+        estadoSelect.innerHTML = ''; // Limpiar opciones previas
+        const permitidas = opcionesPorEstado[estadoActual];
+        permitidas.forEach(estado => {
+            const option = document.createElement("option");
+            option.value = estado;
+            option.text = opcionesTexto[estado];
+            if (estado === estadoActual) option.selected = true;
+            estadoSelect.appendChild(option);
+        });
+    }
+
+    function mostrarCampos() {
+        const nuevoEstado = estadoSelect.value;
+
+        // Presupuesto solo editable en APROBADO o EN_PROGRESO o EN_PAUSA
+        if (estadoActual === 'APROBADO' || estadoActual === 'EN_PROGRESO' || estadoActual === 'EN_PAUSA') {
+            presupuestoInput.disabled = false;
+        } else {
+            presupuestoInput.disabled = true;
+        }
+
+        // Mostrar/ocultar fechas según estado nuevo elegido
+        fechaInicioDiv.style.display = (nuevoEstado === 'APROBADO') ? "block" : "none";
+        fechaFinalizacionDiv.style.display = (nuevoEstado === 'COMPLETADO') ? "block" : "none";
+    }
+
+    window.onload = function () {
+        cargarOpciones();
+        mostrarCampos();
+    };
+</script>
+
+
+    </body>
+</html>

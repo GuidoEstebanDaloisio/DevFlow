@@ -22,6 +22,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
     @GetMapping("/cliente")
     public String verInicioCliente(HttpSession session, Model model) {
@@ -34,7 +35,48 @@ public class UsuarioController {
 
         return "cliente/inicio";
     }
+    
+    //-VISTAS GERENTE---------------------------------------------------------------------------------------    
+    @GetMapping("/gerente")
+    public String verInicioGerente(HttpSession session, Model model) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
+        }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+
+        return "gerente/inicio";
+    }
+
+    
+    @GetMapping("/gerente/clientes")
+    public String verClientesComoAdmin(
+            @RequestParam(required = false) String filtro,
+            Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (noEsGerente(usuario)) {
+            return "redirect:/login";
+        }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+
+        List<Usuario> usuarios;
+
+        // Si hay filtros, aplica; sino, trae todo
+        if ((filtro != null && !filtro.isBlank())) {
+            usuarios = usuarioService.obtenerClientesFiltrados(filtro);
+        } else {
+            usuarios = usuarioService.obtenerClientes();
+        }
+
+        // Agrega los datos al modelo
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("filtro", filtro);
+
+        return "gerente/listadoDeClientes";
+    }
+    
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin")
     public String verInicioAdmin(HttpSession session, Model model) {
@@ -177,6 +219,10 @@ public class UsuarioController {
     //-UTILES-----------------------------------------------------------------------------------------------  
     private boolean noEsCliente(Usuario usuario) {
         return usuario == null || usuario.getRol() != RolUsuario.CLIENTE;
+    }
+    
+    private boolean noEsGerente(Usuario usuario) {
+        return usuario == null || usuario.getRol() != RolUsuario.GERENTE;
     }
 
     private boolean noEsAdministrador(Usuario usuario) {
