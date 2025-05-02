@@ -63,6 +63,7 @@
                             <td th:text="${usu.telefono}"></td>
                             <td th:text="${usu.rol}"></td>
                             <td>
+                                <a th:href="@{'/admin/usuarios/detalles/' + ${usu.id}}">👁</a>                                
                                 <a th:href="@{'/admin/usuarios/editar/' + ${usu.id}}">✏️</a>
                                 <a th:href="@{'/admin/usuarios/eliminar/' + ${usu.id}}">🗑</a>
                             </td>

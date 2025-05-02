@@ -1,7 +1,9 @@
 package com.example.DevFlow.controller;
 
+import com.example.DevFlow.model.Proyecto;
 import com.example.DevFlow.model.RolUsuario;
 import com.example.DevFlow.model.Usuario;
+import com.example.DevFlow.service.ProyectoService;
 import com.example.DevFlow.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -22,7 +24,9 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    
+    @Autowired
+    private ProyectoService proyectoService;
+
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
     @GetMapping("/cliente")
     public String verInicioCliente(HttpSession session, Model model) {
@@ -35,7 +39,7 @@ public class UsuarioController {
 
         return "cliente/inicio";
     }
-    
+
     //-VISTAS GERENTE---------------------------------------------------------------------------------------    
     @GetMapping("/gerente")
     public String verInicioGerente(HttpSession session, Model model) {
@@ -49,9 +53,8 @@ public class UsuarioController {
         return "gerente/inicio";
     }
 
-    
     @GetMapping("/gerente/clientes")
-    public String verClientesComoAdmin(
+    public String verClientesComoGerente(
             @RequestParam(required = false) String filtro,
             Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -76,7 +79,26 @@ public class UsuarioController {
 
         return "gerente/listadoDeClientes";
     }
-    
+
+    @GetMapping("/gerente/clientes/detalles/{id}")
+    public String verDetallesClienteComoGerente(@PathVariable Long id, Model model, HttpSession session) {
+        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+
+        if (!usuarioSesion.esGerente()) {
+            return "redirect:/login";
+        }
+
+        Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
+        List<Proyecto> proyectosSolicitados = proyectoService.obtenerProyectosPorIdCliente(usuario.getId());
+
+        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("proyectosSolicitados", proyectosSolicitados);
+
+
+        return "gerente/detallesCliente";
+    }
+
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin")
     public String verInicioAdmin(HttpSession session, Model model) {
@@ -117,6 +139,22 @@ public class UsuarioController {
         model.addAttribute("rolSeleccionado", rol);
 
         return "administrador/listadoDeUsuarios";
+    }
+
+    @GetMapping("/admin/usuarios/detalles/{id}")
+    public String verDetallesUsuarioComoAdmin(@PathVariable Long id, Model model, HttpSession session) {
+        Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+
+        if (!usuarioSesion.esAdministrador()) {
+            return "redirect:/login";
+        }
+
+        Usuario usuario = usuarioService.obtenerUsuarioPorId(id);
+
+        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+        model.addAttribute("usuario", usuario);
+
+        return "administrador/detallesUsuario";
     }
 
     @GetMapping("/admin/usuarios/nuevo")
@@ -216,5 +254,4 @@ public class UsuarioController {
         }
     }
 
-  
 }
