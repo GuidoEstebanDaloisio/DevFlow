@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Proyecto</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        nav {
+            width: 200px;
+            background-color: #e0e0e0;
+            padding: 20px;
+            height: 100vh;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav li {
+            margin-bottom: 10px;
+        }
+        .layout {
+            display: flex;
+        }
+        main {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        table {
+            text-align: left;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .input-fecha, .input-fecha-final {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <h2>DevFlow</h2>
+    <div>
+        <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
+        <button onclick="window.location.href='/login'" style="margin-left: 20px;">Cerrar sesión</button>
+    </div>
+</header>
+
+<!-- Layout principal -->
+<div class="layout">
+    <!-- Sidebar -->
+    <nav>
+        <ul>
+            <li>🏠 <a href="/admin">Inicio</a></li>
+            <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+            <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+            <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main>
+        <input type="hidden" id="estado-actual" th:value="${proyecto.estadoAvance.name()}"/>
+
+        <h1>Detalles del Proyecto</h1>
+
+        <!-- Detalles del proyecto -->
+        <div>
+            <p><strong>ID:</strong> <span th:text="${proyecto.id}"></span></p>
+            <p><strong>Título:</strong> <span th:text="${proyecto.titulo}"></span></p>
+            <p><strong>Descripción:</strong> <span th:text="${proyecto.descripcion}"></span></p>
+            <p><strong>Medio de Encargo:</strong> <span th:text="${proyecto.medioEncargo}"></span></p>
+            <p><strong>Presupuesto:</strong> $<span th:text="${proyecto.presupuesto}"></span></p>
+            <p><strong>Estado de Avance:</strong> <span th:text="${proyecto.estadoAvance}"></span></p>
+            <p><strong>Fecha de Inicio:</strong>
+                <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
+            </p>
+            <p><strong>Fecha de Finalización:</strong>
+                <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
+            </p>
+            <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
+        </div>
+
+        <!-- Tabla de desarrolladores -->
+        <h2>Desarrolladores Asignados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Habilidades</th>
+                    <th>Disponible</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="dev : ${desarrolladoresAsignados}">
+                    <td th:text="${dev.id}"></td>
+                    <td th:text="${dev.nombre}"></td>
+                    <td th:text="${dev.habilidades}"></td>
+                    <td th:text="${dev.disponible} ? 'Sí' : 'No'"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="/admin/proyectos">
+            <button type="button">Volver a Proyectos</button>
+        </a>
+    </main>
+</div>
+
+</body>
+</html>

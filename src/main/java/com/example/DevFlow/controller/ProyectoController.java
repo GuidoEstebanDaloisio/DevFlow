@@ -34,27 +34,49 @@ public class ProyectoController {
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
     @GetMapping("/admin/proyectos")
-    public String verProyectosComoAdmin(HttpSession session, Model model) {
+    public String verProyectosComoAdmin(
+            @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) String estado,
+            Model model, HttpSession session) {
+
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
+
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+
+        List<Proyecto> proyectos;
+
+        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
+            proyectos = proyectoService.obtenerProyectosFiltradosParaGerente(filtro, estado);
+        } else {
+            proyectos = proyectoService.obtenerProyectos();
+        }
+
+        model.addAttribute("proyectos", proyectos);
+        model.addAttribute("filtro", filtro);
+        model.addAttribute("estadoSeleccionado", estado);
 
         return "administrador/listadoDeProyectos";
     }
 
-    @GetMapping("/admin/proyectos/detalle")
-    public String verDetalleDeProyectoComoAdmin(HttpSession session, Model model) {
+    @GetMapping("/admin/proyectos/detalles/{id}")
+    public String verDetallesProyectoComoAdmin(@PathVariable Long id, Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        return "administrador/detalleProyecto";
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+        List<Desarrollador> desarrolladoresAsignados = desarrolladorService.obtenerPorProyecto(proyecto);
+
+        model.addAttribute("proyecto", proyecto);
+        model.addAttribute("desarrolladoresAsignados", desarrolladoresAsignados);
+
+        return "administrador/detallesProyecto";
     }
 
     //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
@@ -83,6 +105,23 @@ public class ProyectoController {
         model.addAttribute("estadoSeleccionado", estado);
 
         return "cliente/listadoDeProyectos";
+    }
+
+    @GetMapping("/cliente/proyectos/detalles/{id}")
+    public String verDetallesProyectoComoCliente(@PathVariable Long id, Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (!usuario.esCliente()) {
+            return "redirect:/login";
+        }
+
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
+        List<Desarrollador> desarrolladoresAsignados = desarrolladorService.obtenerPorProyecto(proyecto);
+
+        model.addAttribute("proyecto", proyecto);
+        model.addAttribute("desarrolladoresAsignados", desarrolladoresAsignados);
+
+        return "cliente/detallesProyecto";
     }
 
     //-VISTAS GERENTE---------------------------------------------------------------------------------------    
@@ -130,7 +169,7 @@ public class ProyectoController {
     }
 
     @GetMapping("/gerente/proyectos/detalles/{id}")
-    public String verDetallesProyecto(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesProyectoComoGerente(@PathVariable Long id, Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -238,7 +277,7 @@ public class ProyectoController {
         // 4) Redirijo a la página de detalles
         return "redirect:/gerente/proyectos/detalles/" + id;
     }
-    
+
     @PostMapping("/gerente/proyectos/detalles/{id}/guardar-fecha-final")
     public String guardarFechaFin(
             @PathVariable Long id,
@@ -257,8 +296,7 @@ public class ProyectoController {
         // 4) Redirijo a la página de detalles
         return "redirect:/gerente/proyectos/detalles/" + id;
     }
-    
-    
+
     @GetMapping("/gerente/proyectos/eliminar/{id}")
     public String eliminarProyecto(@PathVariable Long id, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -271,10 +309,7 @@ public class ProyectoController {
 
         return "redirect:/gerente/proyectos";
     }
-    
-    
-    
-    
+
     @PostMapping("/gerente/proyectos/editar/{id}")
     public String editarProyecto(@PathVariable Long id,
             @ModelAttribute Proyecto proyectoActualizado,
@@ -296,6 +331,5 @@ public class ProyectoController {
             return "gerente/editarProyecto";
         }
     }
-
 
 }

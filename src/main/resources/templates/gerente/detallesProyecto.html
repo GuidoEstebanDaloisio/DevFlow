@@ -111,15 +111,15 @@
             <p><strong>Medio de Encargo:</strong> <span th:text="${proyecto.medioEncargo}"></span></p>
             <p><strong>Presupuesto:</strong> $<span th:text="${proyecto.presupuesto}"></span></p>
             <p><strong>Estado de Avance:</strong> <span th:text="${proyecto.estadoAvance}"></span></p>
-            
+
             <p><strong>Fecha de Inicio:</strong>
-    <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
-</p>
-<p><strong>Fecha de Finalización:</strong>
-    <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
-</p>
-            
-            
+                <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
+            </p>
+            <p><strong>Fecha de Finalización:</strong>
+                <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
+            </p>
+
+
             <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
         </div>
 
