@@ -34,7 +34,7 @@ public class Usuario {
     @Column(name = "contrasenia", nullable = false, columnDefinition = "TEXT")
     private String contrasenia;
 
-     @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
+    @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
     private String email;
 
     @Column(name = "telefono", nullable = false)
@@ -47,7 +47,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<Proyecto> proyectos;
-    
+
     public Usuario() {
     }
 
@@ -58,8 +58,6 @@ public class Usuario {
         this.telefono = telefono;
         this.rol = rol;
     }
-    
-    
 
     public String getEmail() {
         return email;
@@ -93,8 +91,6 @@ public class Usuario {
         this.proyectos = proyectos;
     }
 
-
-
     public Long getId() {
         return id;
     }
@@ -119,5 +115,15 @@ public class Usuario {
         this.contrasenia = contrasenia;
     }
 
+    public boolean esCliente() {
+        return rol.equals(RolUsuario.CLIENTE);
+    }
+
+    public boolean esGerente() {
+        return rol.equals(RolUsuario.GERENTE);
+    }
     
+    public boolean esAdministrador() {
+        return rol.equals(RolUsuario.ADMINISTRADOR);
+    }
 }

@@ -29,7 +29,7 @@ public class DesarrolladorController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
 
@@ -56,7 +56,7 @@ public class DesarrolladorController {
     public String mostrarFormularioNuevoDesarrollador(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
 
@@ -68,7 +68,7 @@ public class DesarrolladorController {
     public String mostrarFormularioEdicionDesarrollador(@PathVariable Long id, HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
 
@@ -90,7 +90,7 @@ public class DesarrolladorController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
         Desarrollador nuevo = new Desarrollador(nombre, habilidades);
@@ -106,7 +106,7 @@ public class DesarrolladorController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
 
@@ -121,7 +121,7 @@ public class DesarrolladorController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
 
@@ -133,10 +133,5 @@ public class DesarrolladorController {
             model.addAttribute("error", e.getMessage());
             return "administrador/editarDesarrollador";
         }
-    }
-
-    //-UTILES-----------------------------------------------------------------------------------------------    
-    private boolean noEsAdministrador(Usuario usuario) {
-        return usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR;
     }
 }

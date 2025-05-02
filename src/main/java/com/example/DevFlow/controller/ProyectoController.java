@@ -37,7 +37,7 @@ public class ProyectoController {
     public String verProyectosComoAdmin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
@@ -49,7 +49,7 @@ public class ProyectoController {
     public String verDetalleDeProyectoComoAdmin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsAdministrador(usuario)) {
+        if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());
@@ -65,7 +65,7 @@ public class ProyectoController {
             Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsCliente(usuario)) {
+        if (!usuario.esCliente()) {
             return "redirect:/login";
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());
@@ -94,7 +94,7 @@ public class ProyectoController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -119,7 +119,7 @@ public class ProyectoController {
     public String mostrarFormularioNuevoProyecto(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -133,7 +133,7 @@ public class ProyectoController {
     public String verDetallesProyecto(@PathVariable Long id, Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -150,7 +150,7 @@ public class ProyectoController {
     public String mostrarFormularioEditarProyecto(@PathVariable Long id, Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -176,7 +176,7 @@ public class ProyectoController {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -207,7 +207,7 @@ public class ProyectoController {
             HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -263,7 +263,7 @@ public class ProyectoController {
     public String eliminarProyecto(@PathVariable Long id, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -281,7 +281,7 @@ public class ProyectoController {
             Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (noEsGerente(usuario)) {
+        if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
@@ -297,16 +297,5 @@ public class ProyectoController {
         }
     }
 
-    //-UTILES-----------------------------------------------------------------------------------------------    
-    private boolean noEsCliente(Usuario usuario) {
-        return usuario == null || usuario.getRol() != RolUsuario.CLIENTE;
-    }
 
-    private boolean noEsGerente(Usuario usuario) {
-        return usuario == null || usuario.getRol() != RolUsuario.GERENTE;
-    }
-
-    private boolean noEsAdministrador(Usuario usuario) {
-        return usuario == null || usuario.getRol() != RolUsuario.ADMINISTRADOR;
-    }
 }
