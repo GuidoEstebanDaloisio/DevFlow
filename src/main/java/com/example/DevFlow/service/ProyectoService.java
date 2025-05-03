@@ -2,11 +2,13 @@ package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.*;
 import static com.example.DevFlow.model.MensajeError.*;
+import com.example.DevFlow.repository.DesarrolladorRepository;
 import com.example.DevFlow.repository.ProyectoRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class ProyectoService {
 
     @Autowired
     private ProyectoRepository proyectoRepository;
+
+    @Autowired
+    private DesarrolladorRepository desarrolladorRepository;
 
     private MensajeError error;
 
@@ -27,9 +32,12 @@ public class ProyectoService {
     }
 
     public void eliminarProyecto(Long id) {
+        
+        liberarDesarrolladores(obtenerProyectoPorId(id));
+        
         proyectoRepository.deleteById(id);
     }
-    
+
     public void actualizarProyecto(Long id, Proyecto actualizado) {
         Proyecto existente = obtenerProyectoPorId(id);
 
@@ -159,6 +167,7 @@ public class ProyectoService {
                 break;
             case CANCELADO:
                 if (proyecto.puedeCancelarse()) {
+                    liberarDesarrolladores(proyecto);
                     proyecto.setEstadoAvance(EstadoProyecto.CANCELADO);
                 } else {
                     throw new IllegalArgumentException("El proyecto no puede ser cancelado.");
@@ -166,6 +175,9 @@ public class ProyectoService {
                 break;
             case EN_PROGRESO:
                 if (proyecto.puedeDesarrollarse()) {
+                    if (proyecto.getFechaInicio() == null) {
+                        throw new IllegalArgumentException("El proyecto no puede comenzar sin fecha de inicio del proyecto");
+                    }
                     proyecto.setEstadoAvance(EstadoProyecto.EN_PROGRESO);
                 } else {
                     throw new IllegalArgumentException("El proyecto no puede comenzar.");
@@ -173,6 +185,10 @@ public class ProyectoService {
                 break;
             case COMPLETADO:
                 if (proyecto.puedeFinalizarse()) {
+                    if (proyecto.getFechaFinalizacion() == null) {
+                        throw new IllegalArgumentException("El proyecto no puede terminar sin fecha de finalizacion del proyecto");
+                    }
+                    liberarDesarrolladores(proyecto);
                     proyecto.setEstadoAvance(EstadoProyecto.COMPLETADO);
                 } else {
                     throw new IllegalArgumentException("El proyecto no puede finalizarse.");
@@ -193,8 +209,17 @@ public class ProyectoService {
         proyectoRepository.save(proyecto);
     }
 
-    
-    
+    private void liberarDesarrolladores(Proyecto proyecto) {
+        List<Desarrollador> desarrolladores = proyecto.getDesarrolladores();
+        for (Desarrollador dev : desarrolladores) {
+            dev.setEstaDisponible(true);
+            dev.desasignarProyecto();
+            desarrolladorRepository.save(dev);
+        }
+        // impiar la lista del proyecto para desvincular desde ambos lados
+        proyecto.getDesarrolladores().clear();
+    }
+
     public void establecerFechaInicio(Long idProyecto, Date fechaInicio) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
@@ -202,7 +227,7 @@ public class ProyectoService {
         proyecto.setFechaInicio(fechaInicio);
         proyectoRepository.save(proyecto);
     }
-    
+
     public void establecerFechaFin(Long idProyecto, Date fechaFin) {
         Proyecto proyecto = proyectoRepository.findById(idProyecto)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
@@ -211,5 +236,4 @@ public class ProyectoService {
         proyectoRepository.save(proyecto);
     }
 
-    
 }

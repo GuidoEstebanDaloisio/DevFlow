@@ -1,6 +1,7 @@
 package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.Desarrollador;
+import com.example.DevFlow.model.EstadoProyecto;
 import com.example.DevFlow.model.MensajeError;
 import static com.example.DevFlow.model.MensajeError.DESARROLLADOR_NO_EXISTE;
 import com.example.DevFlow.model.Proyecto;
@@ -17,6 +18,9 @@ public class DesarrolladorService {
     @Autowired
     private DesarrolladorRepository desarrolladorRepository;
 
+    @Autowired
+    private ProyectoService proyectoService;
+
     private MensajeError error;
 
     public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
@@ -25,6 +29,20 @@ public class DesarrolladorService {
 
     public void eliminarDesarrollador(Long id) {
         desarrolladorRepository.deleteById(id);
+    }
+
+    public void asignarAProyecto(Long idProyecto, Long idDesarrollador) {
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(idProyecto);
+        Desarrollador desarrollador = obtenerDesarrolladorPorId(idDesarrollador);
+
+        if (proyecto != null && desarrollador != null) {
+            desarrollador.setProyecto(proyecto);
+            proyecto.getDesarrolladores().add(desarrollador);
+
+            desarrolladorRepository.save(desarrollador);
+        } else {
+            System.out.println("No se encontró el proyecto o el desarrollador.");
+        }
     }
 
     public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
@@ -64,6 +82,10 @@ public class DesarrolladorService {
         }
 
         return asignados;
+    }
+
+    public List<Desarrollador> obtenerDesarrolladoresDisponibles() {
+        return obtenerDesarrolladoresFiltrados(null, "DISPONIBLE");
     }
 
     public List<Desarrollador> obtenerDesarrolladoresFiltrados(String filtro, String estado) {

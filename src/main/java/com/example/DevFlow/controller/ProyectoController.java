@@ -72,10 +72,12 @@ public class ProyectoController {
 
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
         List<Desarrollador> desarrolladoresAsignados = desarrolladorService.obtenerPorProyecto(proyecto);
+        List<Desarrollador> desarrolladoresDisponibles = desarrolladorService.obtenerDesarrolladoresDisponibles();
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
         model.addAttribute("proyecto", proyecto);
         model.addAttribute("desarrolladoresAsignados", desarrolladoresAsignados);
+        model.addAttribute("desarrolladoresDisponibles", desarrolladoresDisponibles);
 
         return "administrador/detallesProyecto";
     }

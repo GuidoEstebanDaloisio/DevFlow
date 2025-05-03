@@ -49,8 +49,6 @@ public class Desarrollador {
         this.estaDisponible = true;
     }
 
-
-
     public Long getId() {
         return id;
     }
@@ -83,13 +81,18 @@ public class Desarrollador {
         this.estaDisponible = estaDisponible;
     }
 
-
     public Proyecto getProyecto() {
         return proyecto;
     }
 
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
+        estaDisponible = false;
+    }
+
+    public void desasignarProyecto() {
+        setProyecto(null);
+        estaDisponible = true;
     }
 
 }

@@ -59,11 +59,10 @@
                             <td th:text="${dev.nombre}"></td>
                             <td th:text="${dev.habilidades}"></td>
                             <td th:text="${dev.estaDisponible} ? 'Disponible' : 'Asignado'"></td>
-                            <td th:text="${dev.proyecto != null ? dev.proyecto.nombre : 'Sin proyecto'}"></td>
+                            <td th:text="${dev.proyecto != null ? dev.proyecto.getTitulo : 'Sin proyecto'}"></td>
                             <td>
                                 <a th:href="@{'/admin/desarrolladores/editar/' + ${dev.id}}">✏️</a>
                                 <a th:href="@{'/admin/desarrolladores/eliminar/' + ${dev.id}}">🗑️</a>
-                                <a th:href="@{'/admin/desarrolladores/asignar/' + ${dev.id}}">📌</a>
                             </td>
                         </tr>
                     </tbody>

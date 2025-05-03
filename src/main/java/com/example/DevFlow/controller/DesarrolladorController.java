@@ -1,14 +1,14 @@
 package com.example.DevFlow.controller;
 
 import com.example.DevFlow.model.Desarrollador;
-import com.example.DevFlow.model.RolUsuario;
+import com.example.DevFlow.model.Proyecto;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.service.DesarrolladorService;
+import com.example.DevFlow.service.ProyectoService;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +19,9 @@ public class DesarrolladorController {
 
     @Autowired
     private DesarrolladorService desarrolladorService;
+
+    @Autowired
+    private ProyectoService proyectoService;
 
     //-VISTAS-----------------------------------------------------------------------------------------------    
     @GetMapping("/admin/desarrolladores")
@@ -77,8 +80,19 @@ public class DesarrolladorController {
             model.addAttribute("desarrollador", desarrollador);
             return "administrador/editarDesarrollador";
         } catch (IllegalArgumentException e) {
-        return "redirect:/admin/desarrolladores?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
+            return "redirect:/admin/desarrolladores?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);    //Envio el error desde el servicio
         }
+    }
+
+    //-ASIGNACION-------------------------------------------------------------------------------------------
+    @PostMapping("/admin/asignarDesarrollador")
+    public String asignarDesarrollador(@RequestParam Long proyectoId, @RequestParam Long desarrolladorId) {
+
+        System.out.println("-------------------------------Asignando desarrollador con ID: " + desarrolladorId + " al proyecto con ID: " + proyectoId);
+                
+        desarrolladorService.asignarAProyecto(proyectoId, desarrolladorId);
+        
+        return ("redirect:/admin/proyectos/detalles/"+proyectoId);
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
