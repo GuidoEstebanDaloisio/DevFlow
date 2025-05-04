@@ -32,9 +32,9 @@ public class ProyectoService {
     }
 
     public void eliminarProyecto(Long id) {
-        
+
         liberarDesarrolladores(obtenerProyectoPorId(id));
-        
+
         proyectoRepository.deleteById(id);
     }
 
@@ -49,9 +49,6 @@ public class ProyectoService {
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setMedioEncargo(actualizado.getMedioEncargo());
         existente.setPresupuesto(actualizado.getPresupuesto());
-        existente.setEstadoAvance(actualizado.getEstadoAvance());
-        existente.setFechaInicio(actualizado.getFechaInicio());
-        existente.setFechaFinalizacion(actualizado.getFechaFinalizacion());
 
         proyectoRepository.save(existente);
     }
@@ -234,6 +231,12 @@ public class ProyectoService {
 
         proyecto.setFechaFinalizacion(fechaFin);
         proyectoRepository.save(proyecto);
+    }
+
+    public void consultarSiEsPosibleEditarElProyecto(Proyecto proyecto) {
+        if (!proyecto.puedeEditarse()) {
+            throw new IllegalArgumentException("El proyecto no existe.");
+        }
     }
 
 }

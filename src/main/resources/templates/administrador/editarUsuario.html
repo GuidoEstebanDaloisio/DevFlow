@@ -1,39 +1,73 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Editar Usuario</title>
-    </head>
-    <body>
-        <h2>✏️ Editar Usuario</h2>
-
-        <!-- Mostrar errores si los hay -->
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+    <script src="/js/editar-usuario.js" defer></script>
+</head>
+<body>
+    <!-- Encabezado -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
+        <h2>DevFlow</h2>
+        <div>
+            <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
+            <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
         </div>
+    </div>
 
-        <form th:action="@{'/admin/usuarios/editar/' + ${usuario.id}}" th:object="${usuario}" method="post">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" th:field="*{nombre}" required><br><br>
+    <!-- Contenedor principal -->
+    <div style="display: flex; height: 90vh;">
+        <!-- Barra lateral -->
+        <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+            <ul style="list-style-type: none; padding: 0;">
+                <li>🏠 <a href="#">Inicio</a></li>
+                <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+            </ul>
+        </nav>
 
-            <label for="contrasenia">Nueva Contraseña (dejar vacío para mantener la actual):</label>
-            <input type="password" id="contrasenia" th:field="*{contrasenia}" /><br><br>
+        <!-- Contenido principal -->
+        <main style="flex: 1; padding: 30px;">
+            <h2>✏️ Editar Usuario</h2>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" th:field="*{email}" required><br><br>
+            <!-- Mostrar errores si los hay -->
+            <div th:if="${error}" style="color: red;">
+                <p th:text="${error}"></p>
+            </div>
 
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" th:field="*{telefono}"><br><br>
+            <form th:action="@{'/admin/usuarios/editar/' + ${usuario.id}}" th:object="${usuario}" method="post">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" th:field="*{nombre}" required><br><br>
 
-            <label for="rol">Rol:</label>
-            <select id="rol" th:field="*{rol}">
-                <option value="ADMINISTRADOR">Administrador</option>
-                <option value="GERENTE">Gerente</option>
-                <option value="CLIENTE">Cliente</option>
-            </select><br><br>
+               
 
-            <button type="submit">Guardar cambios</button>
-            <a href="/admin/usuarios"><button type="button">Cancelar</button></a>
-        </form>
-    </body>
+                <!-- Campo de contraseña oculto por defecto -->
+                <div id="campo-contrasenia" style="display: none;">
+                    <label for="contrasenia">Nueva Contraseña:</label>
+                    <input type="password" id="contrasenia" th:field="*{contrasenia}" /><br><br>
+                </div>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" th:field="*{email}" required><br><br>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" th:field="*{telefono}"><br><br>
+
+                <label for="rol">Rol:</label>
+                <select id="rol" th:field="*{rol}">
+                    <option value="ADMINISTRADOR">Administrador</option>
+                    <option value="GERENTE">Gerente</option>
+                    <option value="CLIENTE">Cliente</option>
+                </select><br><br>
+
+                 <!-- Botón para mostrar el campo de contraseña -->
+                <button type="button" id="btn-cambiar-contrasenia">Cambiar contraseña</button><br><br>
+                
+                <button type="submit">Guardar cambios</button>
+                <a href="/admin/usuarios"><button type="button">Cancelar</button></a>
+            </form>
+        </main>
+    </div>
+</body>
 </html>

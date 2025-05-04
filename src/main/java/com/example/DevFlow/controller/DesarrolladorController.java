@@ -84,15 +84,21 @@ public class DesarrolladorController {
         }
     }
 
-    //-ASIGNACION-------------------------------------------------------------------------------------------
+    //-ASIGNACION Y DESASIGNACION---------------------------------------------------------------------------
     @PostMapping("/admin/asignarDesarrollador")
     public String asignarDesarrollador(@RequestParam Long proyectoId, @RequestParam Long desarrolladorId) {
 
-        System.out.println("-------------------------------Asignando desarrollador con ID: " + desarrolladorId + " al proyecto con ID: " + proyectoId);
-                
         desarrolladorService.asignarAProyecto(proyectoId, desarrolladorId);
-        
-        return ("redirect:/admin/proyectos/detalles/"+proyectoId);
+
+        return ("redirect:/admin/proyectos/detalles/" + proyectoId);
+    }
+
+    @PostMapping("/admin/desasignarDesarrollador")
+    public String desasignarDesarrollador(@RequestParam Long proyectoId, @RequestParam Long desarrolladorId) {
+
+        desarrolladorService.desasignarAProyecto(proyectoId, desarrolladorId);
+
+        return ("redirect:/admin/proyectos/detalles/" + proyectoId);
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------

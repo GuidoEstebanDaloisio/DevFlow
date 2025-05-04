@@ -197,12 +197,17 @@ public class ProyectoController {
         }
 
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
-        EstadoProyecto[] estados = EstadoProyecto.values();
 
-        model.addAttribute("proyecto", proyecto);
-        model.addAttribute("estadosProyecto", estados);
+        try {
+            proyectoService.consultarSiEsPosibleEditarElProyecto(proyecto);
 
-        return "gerente/editarProyecto";
+            model.addAttribute("proyecto", proyecto);
+
+            return "gerente/editarProyecto";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/gerente/proyectos/detalles/" + id + "?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
@@ -319,18 +324,22 @@ public class ProyectoController {
             Model model, HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
+        System.out.println("-----------------------------------ENTRAMOS ");
+
         if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
+        System.out.println("-----------------------------------ES GERENTE");
+
         try {
             proyectoService.actualizarProyecto(id, proyectoActualizado);
-            return "redirect:/gerente/proyectos/" + id;
+            System.out.println("--------------------------------------TODO JOYAAAAAAA");
+            return "redirect:/gerente/proyectos";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            EstadoProyecto[] estados = EstadoProyecto.values();
-            model.addAttribute("estadosProyecto", estados);
             model.addAttribute("proyecto", proyectoActualizado);
+            System.out.println("--------------------------------------SALIO PARA EL OCOTE");
             return "gerente/editarProyecto";
         }
     }

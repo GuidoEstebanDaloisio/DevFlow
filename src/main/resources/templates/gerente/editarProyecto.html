@@ -1,98 +1,105 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Editar Proyecto</title>
-    </head>
-    <body>
-        <h2>✏️ Editar Proyecto</h2>
-
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
-        </div>
-
-        <form th:action="@{'/gerente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" method="post">
-    <label for="estadoAvance">Estado de Avance:</label>
-    <select id="estadoAvance" th:field="*{estadoAvance}" onchange="mostrarCampos()">
-        <!-- Opciones cargadas dinámicamente por JavaScript -->
-    </select><br><br>
-
-    <div id="fechaInicioDiv" style="display: none;">
-        <label for="fechaInicio">Fecha de Inicio:</label>
-        <input type="date" id="fechaInicio" th:field="*{fechaInicio}"><br><br>
-    </div>
-
-    <div id="fechaFinalizacionDiv" style="display: none;">
-        <label for="fechaFinalizacion">Fecha de Finalización:</label>
-        <input type="date" id="fechaFinalizacion" th:field="*{fechaFinalizacion}"><br><br>
-    </div>
-
-    <label for="presupuesto">Presupuesto:</label>
-    <input type="number" id="presupuesto" th:field="*{presupuesto}"><br><br>
-
-    <button type="submit">Guardar cambios</button>
-</form>
-
-<script>
-    const estadoActual = /*[[${proyecto.estadoAvance}]]*/ 'EN_REVISION';
-    const estadoSelect = document.getElementById("estadoAvance");
-    const presupuestoInput = document.getElementById("presupuesto");
-    const fechaInicioDiv = document.getElementById("fechaInicioDiv");
-    const fechaFinalizacionDiv = document.getElementById("fechaFinalizacionDiv");
-
-    const opcionesPorEstado = {
-        'EN_REVISION': ['APROBADO', 'RECHAZADO'],
-        'APROBADO': ['APROBADO', 'CANCELADO'],
-        'EN_PROGRESO': ['EN_PROGRESO', 'COMPLETADO', 'EN_PAUSA', 'CANCELADO'],
-        'EN_PAUSA': ['EN_PAUSA', 'EN_PROGRESO'],
-        'RECHAZADO': ['RECHAZADO'],
-        'COMPLETADO': ['COMPLETADO'],
-        'CANCELADO': ['CANCELADO']
-    };
-
-    const opcionesTexto = {
-        'APROBADO': 'Aprobado',
-        'RECHAZADO': 'Rechazado',
-        'EN_REVISION': 'En revisión',
-        'EN_PROGRESO': 'En progreso',
-        'EN_PAUSA': 'En pausa',
-        'COMPLETADO': 'Completado',
-        'CANCELADO': 'Cancelado'
-    };
-
-    function cargarOpciones() {
-        estadoSelect.innerHTML = ''; // Limpiar opciones previas
-        const permitidas = opcionesPorEstado[estadoActual];
-        permitidas.forEach(estado => {
-            const option = document.createElement("option");
-            option.value = estado;
-            option.text = opcionesTexto[estado];
-            if (estado === estadoActual) option.selected = true;
-            estadoSelect.appendChild(option);
-        });
-    }
-
-    function mostrarCampos() {
-        const nuevoEstado = estadoSelect.value;
-
-        // Presupuesto solo editable en APROBADO o EN_PROGRESO o EN_PAUSA
-        if (estadoActual === 'APROBADO' || estadoActual === 'EN_PROGRESO' || estadoActual === 'EN_PAUSA') {
-            presupuestoInput.disabled = false;
-        } else {
-            presupuestoInput.disabled = true;
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Proyecto</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        nav {
+            width: 200px;
+            background-color: #e0e0e0;
+            padding: 20px;
+            height: 100vh;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav li {
+            margin-bottom: 10px;
+        }
+        .layout {
+            display: flex;
+        }
+        main {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        form button {
+            padding: 10px 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
 
-        // Mostrar/ocultar fechas según estado nuevo elegido
-        fechaInicioDiv.style.display = (nuevoEstado === 'APROBADO') ? "block" : "none";
-        fechaFinalizacionDiv.style.display = (nuevoEstado === 'COMPLETADO') ? "block" : "none";
-    }
+     <!-- Header -->
+        <header>
+            <h2>DevFlow</h2>
+            <div>
+                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
+                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+            </div>
+        </header>
 
-    window.onload = function () {
-        cargarOpciones();
-        mostrarCampos();
-    };
-</script>
+        <!-- Layout principal -->
+        <div class="layout">
+            <!-- Sidebar -->
+            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
+                <ul style="list-style-type: none; padding: 0;">
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                </ul>
+            </nav>
 
+        <!-- Contenido principal -->
+        <main>
+            <h1>✏️ Editar Proyecto</h1>
 
-    </body>
+            <!-- Mostrar errores si los hay -->
+            <div th:if="${error}" style="color: red;">
+                <p th:text="${error}"></p>
+            </div>
+
+            <!-- Formulario para editar el proyecto -->
+            <form th:action="@{'/gerente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" method="post">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" th:field="*{titulo}" required />
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" th:field="*{descripcion}" rows="4" required></textarea>
+
+                <label for="medioEncargo">Medio de Encargo:</label>
+                <input type="text" id="medioEncargo" th:field="*{medioEncargo}" required />
+
+                <label for="presupuesto">Presupuesto:</label>
+                <input type="number" id="presupuesto" th:field="*{presupuesto}" min="0" required />
+
+                <button type="submit">Guardar cambios</button>
+                <a th:href="@{/gerente/proyectos}">
+                    <button type="button">Cancelar</button>
+                </a>
+            </form>
+        </main>
+    </div>
+
+</body>
 </html>

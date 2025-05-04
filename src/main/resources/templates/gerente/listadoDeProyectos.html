@@ -77,7 +77,8 @@
                             <td th:text="${proyecto.usuario.nombre}"></td>
                             <td>
                                 <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
-                                <a th:href="@{'/gerente/proyectos/eliminar/' + ${proyecto.id}}">🗑</a>
+                                <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}">✏</a>
+                                <a th:href="@{'/gerente/proyectos/eliminar/' + ${proyecto.id}}">🗑</a>                                
                             </td>
                         </tr>
                     </tbody>

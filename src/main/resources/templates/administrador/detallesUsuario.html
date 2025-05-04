@@ -87,10 +87,13 @@
                     <p><strong>Rol:</strong> <span th:text="${usuario.rol}"></span></p>
                 </div>
 
- 
+
 
                 <a href="/admin/usuarios">
                     <button type="button">Volver a Usuarios</button>
+                </a>
+                <a th:href="@{'/admin/usuarios/editar/' + ${usuario.id}}">
+                    <button type="button">Editar Usuario</button>
                 </a>
             </main>
         </div>

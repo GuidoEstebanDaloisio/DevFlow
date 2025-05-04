@@ -105,13 +105,21 @@
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Habilidades</th>
+                            <th>Desasignar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="dev : ${desarrolladoresAsignados}">
-                            <td th:text="${dev.id}"></td>
-                            <td th:text="${dev.nombre}"></td>
-                            <td th:text="${dev.habilidades}"></td>
+                        <tr th:each="devAsig : ${desarrolladoresAsignados}">
+                            <td th:text="${devAsig.id}"></td>
+                            <td th:text="${devAsig.nombre}"></td>
+                            <td th:text="${devAsig.habilidades}"></td>
+                            <td>
+                                <form th:action="@{/admin/desasignarDesarrollador}" method="post">
+                                    <input type="hidden" name="proyectoId" th:value="${proyecto.id}" />
+                                    <input type="hidden" name="desarrolladorId" th:value="${devAsig.id}" />
+                                    <button type="submit">Desasignar</button>
+                                </form>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

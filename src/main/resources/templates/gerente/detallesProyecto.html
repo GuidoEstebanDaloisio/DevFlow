@@ -140,8 +140,7 @@
                 </tr>
             </tbody>
         </table>
-
         <a href="/gerente/proyectos"><button type="button">Volver a Proyectos</button></a>
-
+        <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}"><button type="button">Editar Proyecto</button></a>
     </body>
 </html>

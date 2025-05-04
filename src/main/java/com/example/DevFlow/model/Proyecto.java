@@ -158,7 +158,7 @@ public class Proyecto {
     public void setDesarrolladores(List<Desarrollador> desarrolladores) {
         this.desarrolladores = desarrolladores;
     }
-    
+
     public boolean puedeVolverARevision() {
         return false;
     }
@@ -185,6 +185,16 @@ public class Proyecto {
 
     public boolean puedePausarse() {
         return estadoAvance == EstadoProyecto.EN_PROGRESO;
+    }
+
+    public void liberarDesarrollador(Desarrollador desarrollador) {
+        if (desarrolladores != null) {
+            desarrolladores.remove(desarrollador);
+        }
+    }
+    
+    public boolean puedeEditarse(){ //Los datos del proyecto solo pueden editarse mientras esten en revision ya que sino seria un peligro para el cliente
+        return estadoAvance == EstadoProyecto.ESPERANDO_REVISION;
     }
 
 }

@@ -45,6 +45,21 @@ public class DesarrolladorService {
         }
     }
 
+    public void desasignarAProyecto(Long idProyecto, Long idDesarrollador) {
+        Proyecto proyecto = proyectoService.obtenerProyectoPorId(idProyecto);
+        Desarrollador desarrollador = obtenerDesarrolladorPorId(idDesarrollador);
+
+        if (proyecto != null && desarrollador != null) {
+            
+            desarrollador.desasignarProyecto();
+            
+            proyecto.liberarDesarrollador(desarrollador);
+            desarrolladorRepository.save(desarrollador);
+        } else {
+            System.out.println("No se encontró el proyecto o el desarrollador.");
+        }
+    }
+
     public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
         Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
         if (desarrolladorOptional.isEmpty()) {
