@@ -57,12 +57,58 @@ public class ProyectoService {
         return proyectoRepository.findAll();
     }
 
+    public int obtenerCantidadProyectosPorEstado(EstadoProyecto estado) {
+        List<Proyecto> proyectos = obtenerProyectosPorEstado(estado);
+        return proyectos.size();
+    }
+    
+    public int obtenerCantidadProyectosPorEstadoYCliente(Long idCliente, EstadoProyecto estado) {
+        List<Proyecto> proyectos = obtenerProyectosPorEstadoYCliente(idCliente, estado);
+        return proyectos.size();
+    }
+    
+    public List<Proyecto> obtenerProyectosPorEstadoYCliente(Long idCliente, EstadoProyecto estado) {
+        List<Proyecto> todosLosProyectos = obtenerProyectosPorIdCliente(idCliente);
+
+        List<Proyecto> proyectosFiltrados = new ArrayList<>();
+
+        for (Proyecto proyecto : todosLosProyectos) {
+            boolean coincideConEstado = true;
+
+            if (estado != null ) {            
+                coincideConEstado = proyecto.getEstadoAvance() != null && proyecto.getEstadoAvance().equals(estado);
+            }
+            if (coincideConEstado) {
+                proyectosFiltrados.add(proyecto);
+            }
+        }
+        return proyectosFiltrados;
+    }
+
+    public List<Proyecto> obtenerProyectosPorEstado(EstadoProyecto estado) {
+        List<Proyecto> todosLosProyectos = obtenerProyectos();
+
+        List<Proyecto> proyectosFiltrados = new ArrayList<>();
+
+        for (Proyecto proyecto : todosLosProyectos) {
+            boolean coincideConEstado = true;
+
+            if (estado != null ) {            
+                coincideConEstado = proyecto.getEstadoAvance() != null && proyecto.getEstadoAvance().equals(estado);
+            }
+            if (coincideConEstado) {
+                proyectosFiltrados.add(proyecto);
+            }
+        }
+        return proyectosFiltrados;
+    }
+
     public List<Proyecto> obtenerProyectosPorIdCliente(Long idCliente) {
         return proyectoRepository.findByUsuario_Id(idCliente);
     }
 
     public List<Proyecto> obtenerProyectosFiltradosParaCliente(Long clienteId, String filtro, String estado) {
-        List<Proyecto> todosLosProyectos = proyectoRepository.findByUsuario_Id(clienteId);
+        List<Proyecto> todosLosProyectos = obtenerProyectosPorIdCliente(clienteId);
 
         List<Proyecto> proyectosFiltrados = new ArrayList<>();
 

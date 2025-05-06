@@ -31,11 +31,12 @@
             <main style="flex: 1; padding: 30px;">
                 <h3>🔲 Resumen rápido:</h3>
                 <ul>
-                    <li>✔ 10 Proyectos en curso</li>
-                    <li>✔ 3 Proyectos completados</li>
-                    <li>✔ 15 Usuarios totales</li>
-                    <li>✔ 8 Devs disponibles</li>
+                    <li>✔ <span th:text="${CantProyectosEnProceso}">0</span> Proyectos en curso</li>
+                    <li>✔ <span th:text="${CantProyectosEnPausa}">0</span> Proyectos en pausa</li>
+                    <li>✔ <span th:text="${CantUsuarios}">0</span> Usuarios totales</li>
+                    <li>✔ <span th:text="${CantDevDisponibles}">0</span> Devs disponibles</li>
                 </ul>
+
             </main>
         </div>
     </body>

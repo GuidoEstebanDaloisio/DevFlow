@@ -76,6 +76,11 @@ public class DesarrolladorService {
         return desarrolladorRepository.findAll();
     }
 
+    public int obtenerCantidadDesarrolladoresDisponibles() {
+         List<Desarrollador> desarrolladores = obtenerDesarrolladoresDisponibles();
+         return desarrolladores.size();
+    }
+    
     public Desarrollador obtenerDesarrolladorPorId(Long id) {
         Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
 

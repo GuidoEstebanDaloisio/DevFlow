@@ -27,32 +27,8 @@ public class UsuarioController {
     @Autowired
     private ProyectoService proyectoService;
 
-    //-VISTAS CLIENTE---------------------------------------------------------------------------------------    
-    @GetMapping("/cliente")
-    public String verInicioCliente(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (!usuario.esCliente()) {
-            return "redirect:/login";
-        }
-        model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
-
-        return "cliente/inicio";
-    }
 
     //-VISTAS GERENTE---------------------------------------------------------------------------------------    
-    @GetMapping("/gerente")
-    public String verInicioGerente(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (!usuario.esGerente()) {
-            return "redirect:/login";
-        }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        return "gerente/inicio";
-    }
-
     @GetMapping("/gerente/clientes")
     public String verClientesComoGerente(
             @RequestParam(required = false) String filtro,
@@ -100,17 +76,7 @@ public class UsuarioController {
     }
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
-    @GetMapping("/admin")
-    public String verInicioAdmin(HttpSession session, Model model) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        if (!usuario.esAdministrador()) {
-            return "redirect:/login";
-        }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        return "administrador/inicio";
-    }
 
     @GetMapping("/admin/usuarios")
     public String verUsuariosComoAdmin(

@@ -63,6 +63,12 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
     
+    public int obtenerCantidadUsuarios() {
+        List<Usuario> usuarios = obtenerUsuarios();
+        
+        return usuarios.size();
+    }
+    
     public List<Usuario> obtenerClientes() {
         return obtenerUsuariosPorRol(CLIENTE);
     }
