@@ -24,7 +24,8 @@ public class InicioController {
     private DesarrolladorService desarrolladorService;
 
     @GetMapping("/cliente")
-    public String verInicioCliente(HttpSession session, Model model) {
+    public String verInicioCliente(HttpSession session, 
+            Model model){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esCliente()) {
@@ -53,7 +54,8 @@ public class InicioController {
     }
 
     @GetMapping("/gerente")
-    public String verInicioGerente(HttpSession session, Model model) {
+    public String verInicioGerente(HttpSession session, 
+            Model model){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -81,7 +83,8 @@ public class InicioController {
     }
 
     @GetMapping("/admin")
-    public String verInicioAdmin(HttpSession session, Model model) {
+    public String verInicioAdmin(HttpSession session, 
+            Model model){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {

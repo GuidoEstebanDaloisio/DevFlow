@@ -30,11 +30,6 @@
             <main style="flex: 1; padding: 30px;">
                 <h3>📊 Resumen rápido:</h3>
                 <ul>
-                    <li>🕒 5 Proyectos en espera de revisión</li>
-                    <li>🚧 7 Proyectos en curso</li>
-                    <li>❌ 2 Proyectos rechazados</li>
-
-
                     <li>✔ <span th:text="${CantProyectosEnRevision}">0</span> Proyectos en revision</li>
                     <li>✔ <span th:text="${CantProyectosAprobados}">0</span> Proyectos aprobados</li>
                     <li>✔ <span th:text="${CantProyectosRechazados}">0</span> Proyectos rechazados</li>
@@ -42,7 +37,6 @@
                     <li>✔ <span th:text="${CantProyectosFinalizados}">0</span> Proyectos completados</li>
                     <li>✔ <span th:text="${CantProyectosCancelados}">0</span> Proyectos cancelados</li>
                     <li>✔ <span th:text="${CantProyectosEnPausa}">0</span> Proyectos en pausa</li>
-
                 </ul>
             </main>
         </div>

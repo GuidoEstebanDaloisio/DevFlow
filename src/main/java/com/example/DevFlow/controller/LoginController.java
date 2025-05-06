@@ -1,44 +1,51 @@
 package com.example.DevFlow.controller;
 
+import static com.example.DevFlow.model.RolUsuario.ADMINISTRADOR;
 import com.example.DevFlow.model.Usuario;
 import com.example.DevFlow.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
-@RequestMapping("/api")
+@Controller
 public class LoginController {
 
     @Autowired
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuario usuario, HttpSession session) {
-        Usuario encontrado = usuarioService.obtenerUsuarioPorNombre(usuario.getNombre());
+    public String login(
+            @RequestParam String nombre,
+            @RequestParam String contrasenia,
+            HttpSession session,
+            Model model) {
 
-        if (encontrado == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado");
+        try {
+            Usuario usuario = usuarioService.validarLogin(nombre, contrasenia);
+            session.setAttribute("usuario", usuario);
+            model.addAttribute("nombreUsuario", usuario.getNombre());
+
+            switch (usuario.getRol()) {
+                case ADMINISTRADOR:
+                    return "administrador/inicio";
+
+                case GERENTE:
+                    return "gerente/inicio";
+
+                case CLIENTE:
+                    return "cliente/inicio";
+                default:
+                    return "redirect:/login?error=" + URLEncoder.encode("Este usuario tiene un rol no implementado", StandardCharsets.UTF_8);
+            }
+
+        } catch (IllegalArgumentException e) {
+            return "redirect:/login?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
-
-        if (!encontrado.getContrasenia().equals(usuario.getContrasenia())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta");
-        }
-
-        session.setAttribute("usuario", encontrado); // Guardamos el usuario en sesión
-
-        // Enviamos el rol al frontend para redirigir
-        Map<String, String> respuesta = new HashMap<>();
-        respuesta.put("rol", encontrado.getRol().toString());
-
-        return ResponseEntity.ok(respuesta);
     }
-
 }

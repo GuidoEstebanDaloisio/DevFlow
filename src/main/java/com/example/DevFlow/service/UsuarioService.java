@@ -22,7 +22,6 @@ public class UsuarioService {
 
     RolUsuario rol;
 
-    
     public Usuario crearUsuario(Usuario usuario) {
         validarUsuarioParaCarga(usuario);
 
@@ -62,17 +61,17 @@ public class UsuarioService {
     public List<Usuario> obtenerUsuarios() {
         return usuarioRepository.findAll();
     }
-    
+
     public int obtenerCantidadUsuarios() {
         List<Usuario> usuarios = obtenerUsuarios();
-        
+
         return usuarios.size();
     }
-    
+
     public List<Usuario> obtenerClientes() {
         return obtenerUsuariosPorRol(CLIENTE);
     }
-    
+
     public List<Usuario> obtenerClientesFiltrados(String filtro) {
         return obtenerUsuariosFiltrados(filtro, rol.CLIENTE.toString());
     }
@@ -175,4 +174,19 @@ public class UsuarioService {
             }
         }
     }
+
+    public Usuario validarLogin(String nombre, String contrasenia) {
+        Usuario usuario = obtenerUsuarioPorNombre(nombre);
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        if (!usuario.getContrasenia().equals(contrasenia)) {
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+
+        return usuario;
+    }
+
 }

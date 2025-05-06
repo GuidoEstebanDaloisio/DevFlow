@@ -1,7 +1,6 @@
 package com.example.DevFlow.service;
 
 import com.example.DevFlow.model.Desarrollador;
-import com.example.DevFlow.model.EstadoProyecto;
 import com.example.DevFlow.model.MensajeError;
 import static com.example.DevFlow.model.MensajeError.DESARROLLADOR_NO_EXISTE;
 import com.example.DevFlow.model.Proyecto;
@@ -145,8 +144,9 @@ public class DesarrolladorService {
                 desarrolladoresFiltrados.add(dev);
             }
         }
-
         return desarrolladoresFiltrados;
     }
+    
+    
 
 }

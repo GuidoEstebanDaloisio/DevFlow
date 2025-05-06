@@ -57,7 +57,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/gerente/clientes/detalles/{id}")
-    public String verDetallesClienteComoGerente(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesClienteComoGerente(@PathVariable Long id,
+            Model model, 
+            HttpSession session) {
         Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
 
         if (!usuarioSesion.esGerente()) {
@@ -108,7 +110,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/detalles/{id}")
-    public String verDetallesUsuarioComoAdmin(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesUsuarioComoAdmin(@PathVariable Long id, 
+            Model model, 
+            HttpSession session){
         Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
 
         if (!usuarioSesion.esAdministrador()) {
@@ -124,7 +128,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/nuevo")
-    public String mostrarFormularioNuevoUsuario(HttpSession session, Model model) {
+    public String mostrarFormularioNuevoUsuario(HttpSession session, 
+            Model model){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -136,7 +141,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, HttpSession session, Model model) {
+    public String mostrarFormularioEdicion(@PathVariable Long id, 
+            HttpSession session, 
+            Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -185,7 +192,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable Long id, HttpSession session) {
+    public String eliminarUsuario(@PathVariable Long id, 
+            HttpSession session){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
