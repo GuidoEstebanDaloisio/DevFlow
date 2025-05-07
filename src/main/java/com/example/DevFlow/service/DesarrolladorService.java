@@ -22,8 +22,10 @@ public class DesarrolladorService {
 
     private MensajeError error;
 
-    public Desarrollador crearDesarrollador(Desarrollador desarrollador) {
-        return desarrolladorRepository.save(desarrollador);
+    public Desarrollador crearDesarrollador(String nombre, String habilidades) {
+        Desarrollador nuevoDesarrollador = new Desarrollador(nombre, habilidades);
+
+        return desarrolladorRepository.save(nuevoDesarrollador);
     }
 
     public void eliminarDesarrollador(Long id) {
@@ -34,13 +36,15 @@ public class DesarrolladorService {
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(idProyecto);
         Desarrollador desarrollador = obtenerDesarrolladorPorId(idDesarrollador);
 
-        if (proyecto != null && desarrollador != null) {
+        if (proyecto == null) {
+            throw new IllegalArgumentException("No se encontró el proyecto");
+        } else if (desarrollador == null) {
+            throw new IllegalArgumentException("No se encontró el desarrollador");
+        } else {
             desarrollador.setProyecto(proyecto);
             proyecto.getDesarrolladores().add(desarrollador);
 
             desarrolladorRepository.save(desarrollador);
-        } else {
-            System.out.println("No se encontró el proyecto o el desarrollador.");
         }
     }
 
@@ -48,15 +52,17 @@ public class DesarrolladorService {
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(idProyecto);
         Desarrollador desarrollador = obtenerDesarrolladorPorId(idDesarrollador);
 
-        if (proyecto != null && desarrollador != null) {
-            
+        if (proyecto == null) {
+            throw new IllegalArgumentException("No se encontró el proyecto");
+        } else if (desarrollador == null) {
+            throw new IllegalArgumentException("No se encontró el desarrollador");
+        } else {
             desarrollador.desasignarProyecto();
-            
+
             proyecto.liberarDesarrollador(desarrollador);
             desarrolladorRepository.save(desarrollador);
-        } else {
-            System.out.println("No se encontró el proyecto o el desarrollador.");
         }
+
     }
 
     public void actualizarNombreYHabilidades(Long id, String nombre, String habilidades) {
@@ -76,10 +82,10 @@ public class DesarrolladorService {
     }
 
     public int obtenerCantidadDesarrolladoresDisponibles() {
-         List<Desarrollador> desarrolladores = obtenerDesarrolladoresDisponibles();
-         return desarrolladores.size();
+        List<Desarrollador> desarrolladores = obtenerDesarrolladoresDisponibles();
+        return desarrolladores.size();
     }
-    
+
     public Desarrollador obtenerDesarrolladorPorId(Long id) {
         Optional<Desarrollador> desarrolladorOptional = desarrolladorRepository.findById(id);
 
@@ -146,7 +152,16 @@ public class DesarrolladorService {
         }
         return desarrolladoresFiltrados;
     }
-    
-    
+
+    public List<Desarrollador> obtenerListadoDeDesarrolladores(String filtro, String estado) {
+        // Verifica si hay filtros
+        boolean hayFiltros = (filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank());
+
+        List<Desarrollador> desarrolladores = hayFiltros
+                ? obtenerDesarrolladoresFiltrados(filtro, estado)
+                : obtenerDesarrolladores();
+
+        return desarrolladores;
+    }
 
 }

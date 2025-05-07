@@ -27,7 +27,7 @@ public class UsuarioController {
     @Autowired
     private ProyectoService proyectoService;
 
-
+   
     //-VISTAS GERENTE---------------------------------------------------------------------------------------    
     @GetMapping("/gerente/clientes")
     public String verClientesComoGerente(
@@ -38,18 +38,11 @@ public class UsuarioController {
         if (!usuario.esGerente()) {
             return "redirect:/login";
         }
-        model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        List<Usuario> usuarios;
-
-        // Si hay filtros, aplica; sino, trae todo
-        if ((filtro != null && !filtro.isBlank())) {
-            usuarios = usuarioService.obtenerClientesFiltrados(filtro);
-        } else {
-            usuarios = usuarioService.obtenerClientes();
-        }
+        List<Usuario> usuarios = usuarioService.obtenerListadoDeClientes(filtro);
 
         // Agrega los datos al modelo
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("filtro", filtro);
 
@@ -57,8 +50,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/gerente/clientes/detalles/{id}")
-    public String verDetallesClienteComoGerente(@PathVariable Long id,
-            Model model, 
+    public String verDetallesClienteComoGerente(
+            @PathVariable Long id,
+            Model model,
             HttpSession session) {
         Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
 
@@ -73,13 +67,10 @@ public class UsuarioController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("proyectosSolicitados", proyectosSolicitados);
 
-
         return "gerente/detallesCliente";
     }
 
     //-VISTAS ADMINISTRADOR---------------------------------------------------------------------------------    
-
-
     @GetMapping("/admin/usuarios")
     public String verUsuariosComoAdmin(
             @RequestParam(required = false) String filtro,
@@ -90,18 +81,10 @@ public class UsuarioController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
+
+        List<Usuario> usuarios = usuarioService.obtenerListadoDeUsuarios(filtro, rol);
+
         model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        List<Usuario> usuarios;
-
-        // Si hay filtros, aplica; sino, trae todo
-        if ((filtro != null && !filtro.isBlank()) || (rol != null && !rol.isBlank())) {
-            usuarios = usuarioService.obtenerUsuariosFiltrados(filtro, rol);
-        } else {
-            usuarios = usuarioService.obtenerUsuarios();
-        }
-
-        // Agrega los datos al modelo
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("filtro", filtro);
         model.addAttribute("rolSeleccionado", rol);
@@ -110,9 +93,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/detalles/{id}")
-    public String verDetallesUsuarioComoAdmin(@PathVariable Long id, 
-            Model model, 
-            HttpSession session){
+    public String verDetallesUsuarioComoAdmin(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session) {
         Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
 
         if (!usuarioSesion.esAdministrador()) {
@@ -128,8 +112,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/nuevo")
-    public String mostrarFormularioNuevoUsuario(HttpSession session, 
-            Model model){
+    public String mostrarFormularioNuevoUsuario(
+            HttpSession session,
+            Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -141,8 +126,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, 
-            HttpSession session, 
+    public String mostrarFormularioEdicion(
+            @PathVariable Long id,
+            HttpSession session,
             Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -177,8 +163,7 @@ public class UsuarioController {
         }
 
         try {
-            Usuario nuevo = new Usuario(nombre, contrasenia, email, telefono, rol);
-            usuarioService.crearUsuario(nuevo);
+            usuarioService.crearUsuario(nombre, contrasenia, email, telefono, rol);
             return "redirect:/admin/usuarios";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -192,7 +177,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/admin/usuarios/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable Long id, 
+    public String eliminarUsuario(
+            @PathVariable Long id,
             HttpSession session){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -206,7 +192,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/admin/usuarios/editar/{id}")
-    public String actualizarUsuario(@PathVariable Long id,
+    public String actualizarUsuario(
+            @PathVariable Long id,
             @ModelAttribute Usuario usuarioActualizado,
             HttpSession session,
             Model model) {

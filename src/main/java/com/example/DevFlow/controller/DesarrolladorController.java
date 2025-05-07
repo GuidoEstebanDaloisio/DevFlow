@@ -28,7 +28,8 @@ public class DesarrolladorController {
     public String verDesarrolladores(
             @RequestParam(required = false) String filtro,
             @RequestParam(required = false) String estado,
-            Model model, HttpSession session) {
+            Model model,
+            HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -38,14 +39,7 @@ public class DesarrolladorController {
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        List<Desarrollador> desarrolladores;
-
-        // Verifica si hay filtros
-        boolean hayFiltros = (filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank());
-
-        desarrolladores = hayFiltros
-                ? desarrolladorService.obtenerDesarrolladoresFiltrados(filtro, estado)
-                : desarrolladorService.obtenerDesarrolladores();
+        List<Desarrollador> desarrolladores = desarrolladorService.obtenerListadoDeDesarrolladores(filtro, estado);
 
         // Agrega datos al modelo
         model.addAttribute("desarrolladores", desarrolladores);
@@ -56,7 +50,8 @@ public class DesarrolladorController {
     }
 
     @GetMapping("/admin/desarrolladores/nuevo")
-    public String mostrarFormularioNuevoDesarrollador(HttpSession session, Model model) {
+    public String mostrarFormularioNuevoDesarrollador(HttpSession session,
+            Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -68,7 +63,9 @@ public class DesarrolladorController {
     }
 
     @GetMapping("/admin/desarrolladores/editar/{id}")
-    public String mostrarFormularioEdicionDesarrollador(@PathVariable Long id, HttpSession session, Model model) {
+    public String mostrarFormularioEdicionDesarrollador(@PathVariable Long id,
+            HttpSession session,
+            Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -86,19 +83,41 @@ public class DesarrolladorController {
 
     //-ASIGNACION Y DESASIGNACION---------------------------------------------------------------------------
     @PostMapping("/admin/asignarDesarrollador")
-    public String asignarDesarrollador(@RequestParam Long proyectoId, @RequestParam Long desarrolladorId) {
+    public String asignarDesarrollador(@RequestParam Long proyectoId,
+            HttpSession session,
+            @RequestParam Long desarrolladorId) {
 
-        desarrolladorService.asignarAProyecto(proyectoId, desarrolladorId);
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        return ("redirect:/admin/proyectos/detalles/" + proyectoId);
+        if (!usuario.esAdministrador()) {
+            return "redirect:/login";
+        }
+
+        try {
+            desarrolladorService.asignarAProyecto(proyectoId, desarrolladorId);
+            return ("redirect:/admin/proyectos/detalles/" + proyectoId);
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/proyectos/detalles/{proyectoId}?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
     }
 
     @PostMapping("/admin/desasignarDesarrollador")
-    public String desasignarDesarrollador(@RequestParam Long proyectoId, @RequestParam Long desarrolladorId) {
+    public String desasignarDesarrollador(@RequestParam Long proyectoId,
+            HttpSession session,
+            @RequestParam Long desarrolladorId) {
 
-        desarrolladorService.desasignarAProyecto(proyectoId, desarrolladorId);
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
-        return ("redirect:/admin/proyectos/detalles/" + proyectoId);
+        if (!usuario.esAdministrador()) {
+            return "redirect:/login";
+        }
+
+        try {
+            desarrolladorService.desasignarAProyecto(proyectoId, desarrolladorId);
+            return ("redirect:/admin/proyectos/detalles/" + proyectoId);
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/proyectos/detalles/{proyectoId}?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
     }
 
     //-ALTA, BAJA Y MODIFICACION----------------------------------------------------------------------------
@@ -113,23 +132,22 @@ public class DesarrolladorController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
-        Desarrollador nuevo = new Desarrollador(nombre, habilidades);
 
-        desarrolladorService.crearDesarrollador(nuevo);
+        desarrolladorService.crearDesarrollador(nombre, habilidades);
 
         return "redirect:/admin/desarrolladores";
     }
 
     @GetMapping("/admin/desarrolladores/eliminar/{id}")
-    public String eliminarDesarrollador(@PathVariable Long id, HttpSession session) {
-        desarrolladorService.eliminarDesarrollador(id);
+    public String eliminarDesarrollador(@PathVariable Long id, 
+            HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
-
+        desarrolladorService.eliminarDesarrollador(id);
         return "redirect:/admin/desarrolladores";
     }
 

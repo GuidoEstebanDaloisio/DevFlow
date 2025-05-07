@@ -22,10 +22,13 @@ public class UsuarioService {
 
     RolUsuario rol;
 
-    public Usuario crearUsuario(Usuario usuario) {
-        validarUsuarioParaCarga(usuario);
+    public Usuario crearUsuario(String nombre, String contrasenia, String email, Long telefono, RolUsuario rol) {
+        
+        validarUsuarioParaCarga(email, nombre, contrasenia);
+        
+        Usuario nuevoUsuario = new Usuario(nombre, contrasenia, email, telefono, rol);
 
-        return usuarioRepository.save(usuario);
+        return usuarioRepository.save(nuevoUsuario);
     }
 
     public void eliminarUsuario(Long id) {
@@ -144,16 +147,16 @@ public class UsuarioService {
         return usuariosFiltrados;
     }
 
-    private void validarUsuarioParaCarga(Usuario usuario) {
+    private void validarUsuarioParaCarga(String email, String nombre, String contrasenia) {
         // Verificar si ya existe un usuario con el mismo email
-        if (obtenerUsuarioPorEmail(usuario.getEmail()) != null) {
+        if (obtenerUsuarioPorEmail(email) != null) {
             throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_MAIL);
         }
 
         // Verificar si ya existe un usuario con el mismo nombre y contraseña
         for (Usuario usu : obtenerUsuarios()) {
-            if (usu.getNombre().equalsIgnoreCase(usuario.getNombre())
-                    && usu.getContrasenia().equals(usuario.getContrasenia())) {
+            if (usu.getNombre().equalsIgnoreCase(nombre)
+                    && usu.getContrasenia().equals(contrasenia)) {
                 throw new IllegalArgumentException(EXISTE_USUARIO_CON_MISMO_NOMBRE_Y_CONTRASENIA);
             }
         }
@@ -187,6 +190,27 @@ public class UsuarioService {
         }
 
         return usuario;
+    }
+
+    public List<Usuario> obtenerListadoDeClientes(String filtro) {
+        // Verifica si hay filtros
+        boolean hayFiltros = (filtro != null && !filtro.isBlank());
+
+        List<Usuario> clientes = hayFiltros
+                ? obtenerClientesFiltrados(filtro)
+                : obtenerClientes();
+
+        return clientes;
+    }
+
+    public List<Usuario> obtenerListadoDeUsuarios(String filtro, String rol) {
+        boolean hayFiltros = ((filtro != null && !filtro.isBlank()) || (rol != null && !rol.isBlank()));
+
+        List<Usuario> clientes = hayFiltros
+                ? obtenerUsuariosFiltrados(filtro, rol)
+                : obtenerUsuarios();
+
+        return clientes;
     }
 
 }

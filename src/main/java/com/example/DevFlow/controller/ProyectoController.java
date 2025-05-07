@@ -45,16 +45,9 @@ public class ProyectoController {
             return "redirect:/login";
         }
 
+        List<Proyecto> proyectos = proyectoService.obtenerListadoDeProyectos(filtro, estado);
+
         model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        List<Proyecto> proyectos;
-
-        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
-            proyectos = proyectoService.obtenerProyectosFiltradosParaGerente(filtro, estado);
-        } else {
-            proyectos = proyectoService.obtenerProyectos();
-        }
-
         model.addAttribute("proyectos", proyectos);
         model.addAttribute("filtro", filtro);
         model.addAttribute("estadoSeleccionado", estado);
@@ -63,7 +56,10 @@ public class ProyectoController {
     }
 
     @GetMapping("/admin/proyectos/detalles/{id}")
-    public String verDetallesProyectoComoAdmin(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesProyectoComoAdmin(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {
@@ -87,7 +83,8 @@ public class ProyectoController {
     public String verProyectosComoCliente(
             @RequestParam(required = false) String filtro,
             @RequestParam(required = false) String estado,
-            Model model, HttpSession session) {
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esCliente()) {
@@ -95,14 +92,9 @@ public class ProyectoController {
         }
         model.addAttribute("nombreUsuario", usuario.getNombre());
 
-        List<Proyecto> proyectos;
+        List<Proyecto> proyectos = proyectoService.obtenerListadoDeProyectosParaCliente(usuario.getId(), filtro, estado);
 
-        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
-            proyectos = proyectoService.obtenerProyectosFiltradosParaCliente(usuario.getId(), filtro, estado);
-        } else {
-            proyectos = proyectoService.obtenerProyectosPorIdCliente(usuario.getId());
-        }
-
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         model.addAttribute("proyectos", proyectos);
         model.addAttribute("filtro", filtro);
         model.addAttribute("estadoSeleccionado", estado);
@@ -111,7 +103,10 @@ public class ProyectoController {
     }
 
     @GetMapping("/cliente/proyectos/detalles/{id}")
-    public String verDetallesProyectoComoCliente(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesProyectoComoCliente(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esCliente()) {
@@ -132,7 +127,8 @@ public class ProyectoController {
     public String verProyectosComoGerente(
             @RequestParam(required = false) String filtro,
             @RequestParam(required = false) String estado,
-            Model model, HttpSession session) {
+            Model model,
+            HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
@@ -140,16 +136,9 @@ public class ProyectoController {
             return "redirect:/login";
         }
 
+        List<Proyecto> proyectos = proyectoService.obtenerListadoDeProyectos(filtro, estado);
+
         model.addAttribute("nombreUsuario", usuario.getNombre());
-
-        List<Proyecto> proyectos;
-
-        if ((filtro != null && !filtro.isBlank()) || (estado != null && !estado.isBlank())) {
-            proyectos = proyectoService.obtenerProyectosFiltradosParaGerente(filtro, estado);
-        } else {
-            proyectos = proyectoService.obtenerProyectos();
-        }
-
         model.addAttribute("proyectos", proyectos);
         model.addAttribute("filtro", filtro);
         model.addAttribute("estadoSeleccionado", estado);
@@ -158,7 +147,9 @@ public class ProyectoController {
     }
 
     @GetMapping("/gerente/proyectos/nuevo")
-    public String mostrarFormularioNuevoProyecto(HttpSession session, Model model) {
+    public String mostrarFormularioNuevoProyecto(
+            HttpSession session,
+            Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -172,7 +163,10 @@ public class ProyectoController {
     }
 
     @GetMapping("/gerente/proyectos/detalles/{id}")
-    public String verDetallesProyectoComoGerente(@PathVariable Long id, Model model, HttpSession session) {
+    public String verDetallesProyectoComoGerente(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -189,7 +183,10 @@ public class ProyectoController {
     }
 
     @GetMapping("/gerente/proyectos/editar/{id}")
-    public String mostrarFormularioEditarProyecto(@PathVariable Long id, Model model, HttpSession session) {
+    public String mostrarFormularioEditarProyecto(
+            @PathVariable Long id,
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -229,8 +226,8 @@ public class ProyectoController {
 
         try {
             Usuario cliente = usuarioService.obtenerUsuarioPorId(clienteId);
-            Proyecto nuevo = new Proyecto(titulo, descripcion, medio_encargo, presupuesto, cliente);
-            proyectoService.crearProyecto(nuevo);
+
+            proyectoService.crearProyecto(titulo, descripcion, medio_encargo, presupuesto, cliente);
             return "redirect:/gerente/proyectos";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -248,7 +245,8 @@ public class ProyectoController {
     }
 
     @PostMapping("/gerente/proyectos/detalles/{id}")
-    public String cambiarEstadoProyecto(@PathVariable Long id,
+    public String cambiarEstadoProyecto(
+            @PathVariable Long id,
             @RequestParam EstadoProyecto nuevoEstado,
             Model model,
             HttpSession session) {
@@ -306,7 +304,9 @@ public class ProyectoController {
     }
 
     @GetMapping("/gerente/proyectos/eliminar/{id}")
-    public String eliminarProyecto(@PathVariable Long id, HttpSession session) {
+    public String eliminarProyecto(
+            @PathVariable Long id,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esGerente()) {
@@ -319,27 +319,23 @@ public class ProyectoController {
     }
 
     @PostMapping("/gerente/proyectos/editar/{id}")
-    public String editarProyecto(@PathVariable Long id,
+    public String editarProyecto(
+            @PathVariable Long id,
             @ModelAttribute Proyecto proyectoActualizado,
-            Model model, HttpSession session) {
+            Model model,
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        System.out.println("-----------------------------------ENTRAMOS ");
 
         if (!usuario.esGerente()) {
             return "redirect:/login";
         }
 
-        System.out.println("-----------------------------------ES GERENTE");
-
         try {
             proyectoService.actualizarProyecto(id, proyectoActualizado);
-            System.out.println("--------------------------------------TODO JOYAAAAAAA");
             return "redirect:/gerente/proyectos";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("proyecto", proyectoActualizado);
-            System.out.println("--------------------------------------SALIO PARA EL OCOTE");
             return "gerente/editarProyecto";
         }
     }
