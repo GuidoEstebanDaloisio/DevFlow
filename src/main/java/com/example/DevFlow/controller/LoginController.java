@@ -29,7 +29,7 @@ public class LoginController {
         try {
             Usuario usuario = usuarioService.validarLogin(nombre, contrasenia);
             session.setAttribute("usuario", usuario);
-            model.addAttribute("nombreUsuario", usuario.getNombre());
+            model.addAttribute("usuario", usuario);
 
             switch (usuario.getRol()) {
                 case ADMINISTRADOR:

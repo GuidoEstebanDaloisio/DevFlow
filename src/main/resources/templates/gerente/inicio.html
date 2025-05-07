@@ -1,44 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Panel de Gerente - DevFlow</title>
-    </head>
-    <body>
-        <!-- Encabezado -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-            <h2>DevFlow</h2>
-            <div>
-                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Gerente - DevFlow</title>
+    <link rel="stylesheet" href="css/estilos.css"> <!-- Asegurate de enlazar tu CSS -->
+</head>
+<body>
+    <!-- Encabezado -->
+    <div class="header">
+        <div class="logo">DevFlow</div>
+        <div>
+            <span>Gerente: <span th:text="${usuario.nombre}">Nombre</span></span>
+            <button class="logout-btn" onclick="window.location.href = '/login'">Cerrar sesión</button>
         </div>
+    </div>
 
-        <!-- Contenedor principal -->
-        <div style="display: flex; height: 90vh;">
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Barra lateral -->
+        <nav class="sidebar">
+            <ul>
+                <li>🏠 <a href="/gerente">Inicio</a></li>
+                <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+            </ul>
+        </nav>
 
-            <!-- Barra lateral -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
-                    <li>🏠 <a href="/gerente">Inicio</a></li>
-                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
-                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
-                </ul>
-            </nav>
-
-            <!-- Contenido principal -->
-            <main style="flex: 1; padding: 30px;">
-                <h3>📊 Resumen rápido:</h3>
-                <ul>
-                    <li>✔ <span th:text="${CantProyectosEnRevision}">0</span> Proyectos en revision</li>
-                    <li>✔ <span th:text="${CantProyectosAprobados}">0</span> Proyectos aprobados</li>
-                    <li>✔ <span th:text="${CantProyectosRechazados}">0</span> Proyectos rechazados</li>
-                    <li>✔ <span th:text="${CantProyectosEnProceso}">0</span> Proyectos en curso</li>
-                    <li>✔ <span th:text="${CantProyectosFinalizados}">0</span> Proyectos completados</li>
-                    <li>✔ <span th:text="${CantProyectosCancelados}">0</span> Proyectos cancelados</li>
-                    <li>✔ <span th:text="${CantProyectosEnPausa}">0</span> Proyectos en pausa</li>
-                </ul>
+        <!-- Contenido principal -->
+        <main class="content">
+                <section class="user-card">
+                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">user_name</span></p>
+                    <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
+                    <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">user_tel</span></p>
+                    <p><strong>Rol:</strong> <span th:text="${usuario.rol}">user_rol</span></p>
+                </section>            <section class="summary-cards">
+                    <div class="card pink">Proyectos en revisión: <span th:text="${CantProyectosEnRevision}">0</span></div>
+                    <div class="card green">Proyectos aprobados: <span th:text="${CantProyectosAprobados}">0</span></div>
+                    <div class="card red">Proyectos rechazados: <span th:text="${CantProyectosRechazados}">0</span></div>
+                    <div class="card blue">Proyectos en curso: <span th:text="${CantProyectosEnProceso}">0</span></div>
+                    <div class="card purple">Proyectos completados: <span th:text="${CantProyectosFinalizados}">0</span></div>
+                    <div class="card gray">Proyectos cancelados: <span th:text="${CantProyectosCancelados}">0</span></div>
+                    <div class="card orange">Proyectos en pausa: <span th:text="${CantProyectosEnPausa}">0</span></div>
+                </section>
             </main>
-        </div>
-    </body>
+    </div>
+</body>
 </html>

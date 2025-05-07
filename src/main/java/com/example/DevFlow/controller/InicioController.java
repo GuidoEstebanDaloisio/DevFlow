@@ -41,7 +41,7 @@ public class InicioController {
         int cantidadProyectosEnPausa = proyectoService.obtenerCantidadProyectosPorEstadoYCliente(usuario.getId(), EstadoProyecto.EN_PAUSA);
         
         
-        model.addAttribute("nombreUsuario", usuario.getNombre());   //Se pasa el nombre del usuario logueado para mostrarlo en la vista
+        model.addAttribute("usuario", usuario);
         model.addAttribute("CantProyectosEnRevision", cantidadProyectosEnRevision);
         model.addAttribute("CantProyectosAprobados", cantidadProyectosAprobados);
         model.addAttribute("CantProyectosRechazados", cantidadProyectosRechazados);
@@ -70,7 +70,7 @@ public class InicioController {
         int cantidadProyectosCancelados = proyectoService.obtenerCantidadProyectosPorEstado(EstadoProyecto.CANCELADO);        
         int cantidadProyectosEnPausa = proyectoService.obtenerCantidadProyectosPorEstado(EstadoProyecto.EN_PAUSA);
 
-        model.addAttribute("nombreUsuario", usuario.getNombre());
+        model.addAttribute("usuario", usuario);
         model.addAttribute("CantProyectosEnRevision", cantidadProyectosEnRevision);
         model.addAttribute("CantProyectosAprobados", cantidadProyectosAprobados);
         model.addAttribute("CantProyectosRechazados", cantidadProyectosRechazados);
@@ -96,7 +96,7 @@ public class InicioController {
         int cantidadProyectosEnPausa = proyectoService.obtenerCantidadProyectosPorEstado(EstadoProyecto.EN_PAUSA);
         int cantidadDesarrolladoresDisponibles = desarrolladorService.obtenerCantidadDesarrolladoresDisponibles();
 
-        model.addAttribute("nombreUsuario", usuario.getNombre());
+        model.addAttribute("usuario", usuario);
         model.addAttribute("CantUsuarios", cantidadUsuarios);
         model.addAttribute("CantProyectosEnProceso", cantidadProyectosEnProceso);
         model.addAttribute("CantProyectosEnPausa", cantidadProyectosEnPausa);

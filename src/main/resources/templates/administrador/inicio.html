@@ -1,43 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Panel de Administración - DevFlow</title>
-    </head>
-    <body>
-        <!-- Encabezado -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-            <h2>DevFlow</h2>
-            <div>
-                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - DevFlow</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <h2 class="logo">DevFlow</h2>
+        <div class="user-info">
+            <span>Administrador: <span th:text="${usuario.nombre}">User</span></span>
+            <button class="logout-btn" onclick="window.location.href = '/login'">Cerrar Sesión</button>
         </div>
+    </header>
 
-        <!-- Contenedor principal -->
-        <div style="display: flex; height: 90vh;">
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Barra lateral -->
+        <nav class="sidebar">
+            <ul>
+                <li>🏠 <a href="#">Inicio</a></li>
+                <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+            </ul>
+        </nav>
 
-            <!-- Barra lateral -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
-                    <li>🏠 <a href="#">Inicio</a></li>
-                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
-                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
-                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
-                </ul>
-            </nav>
+        <!-- Contenido principal -->
+        <main class="content">
+            <section class="user-card">
+                <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">user_name</span></p>
+                <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
+                <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">user_tel</span></p>
+                <p><strong>Rol:</strong> <span th:text="${usuario.rol}">user_rol</span></p>
+            </section>
 
-            <!-- Contenido principal -->
-            <main style="flex: 1; padding: 30px;">
-                <h3>🔲 Resumen rápido:</h3>
-                <ul>
-                    <li>✔ <span th:text="${CantProyectosEnProceso}">0</span> Proyectos en curso</li>
-                    <li>✔ <span th:text="${CantProyectosEnPausa}">0</span> Proyectos en pausa</li>
-                    <li>✔ <span th:text="${CantUsuarios}">0</span> Usuarios totales</li>
-                    <li>✔ <span th:text="${CantDevDisponibles}">0</span> Devs disponibles</li>
-                </ul>
-
-            </main>
-        </div>
-    </body>
+            <section class="summary-cards">
+                <div class="card pink">Proyectos en curso: <span th:text="${CantProyectosEnProceso}">0</span></div>
+                <div class="card blue">Proyectos en pausa: <span th:text="${CantProyectosEnPausa}">0</span></div>
+                <div class="card orange">Usuarios totales: <span th:text="${CantUsuarios}">0</span></div>
+                <div class="card purple">Devs disponibles: <span th:text="${CantDevDisponibles}">0</span></div>
+            </section>
+        </main>
+    </div>
+</body>
 </html>
