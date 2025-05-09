@@ -13,6 +13,15 @@ body {
     align-items: center;
 }
 
+h1{
+        font-family: "Pacifico", cursive;
+}
+
+p {
+    font-family: "Gabriela", serif;
+}
+
+
 .home-container {
     text-align: center;
     padding: 40px;

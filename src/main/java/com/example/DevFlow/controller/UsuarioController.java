@@ -136,7 +136,7 @@ public class UsuarioController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
-
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         try {
             Usuario usuarioEditable = usuarioService.obtenerUsuarioPorId(id);
             model.addAttribute("usuario", usuarioEditable);
@@ -206,6 +206,7 @@ public class UsuarioController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         // Intenta actualizar el usuario
         try {

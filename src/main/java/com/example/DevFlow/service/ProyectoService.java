@@ -49,6 +49,11 @@ public class ProyectoService {
             throw new IllegalArgumentException("Proyecto no encontrado.");
         }
 
+        // Verificar si el presupuesto es mayor a 0
+        if (actualizado.getPresupuesto() == null || actualizado.getPresupuesto() <= 0) {
+            throw new IllegalArgumentException(PRESUPUESTO_DEBE_SER_MAYOR_A_CERO);
+        }
+        
         existente.setTitulo(actualizado.getTitulo());
         existente.setDescripcion(actualizado.getDescripcion());
         existente.setMedioEncargo(actualizado.getMedioEncargo());

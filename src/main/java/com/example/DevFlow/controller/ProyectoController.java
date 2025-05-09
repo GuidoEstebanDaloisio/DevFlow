@@ -196,6 +196,8 @@ public class ProyectoController {
 
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
 
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+        
         try {
             proyectoService.consultarSiEsPosibleEditarElProyecto(proyecto);
 
@@ -331,6 +333,7 @@ public class ProyectoController {
         if (!usuario.esGerente()) {
             return "redirect:/login";
         }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         try {
             proyectoService.actualizarProyecto(id, proyectoActualizado);

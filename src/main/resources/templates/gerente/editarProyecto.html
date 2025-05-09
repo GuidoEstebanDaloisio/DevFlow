@@ -1,105 +1,110 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Proyecto</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-bottom: 1px solid #ccc;
-        }
-        nav {
-            width: 200px;
-            background-color: #e0e0e0;
-            padding: 20px;
-            height: 100vh;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav li {
-            margin-bottom: 10px;
-        }
-        .layout {
-            display: flex;
-        }
-        main {
-            flex-grow: 1;
-            padding: 20px;
-        }
-        form input, form textarea, form select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-        form button {
-            padding: 10px 20px;
-            margin-right: 10px;
-        }
-    </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Editar Proyecto</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/formularios.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
+    </head>
+    <body>
 
-     <!-- Header -->
-        <header>
-            <h2>DevFlow</h2>
-            <div>
-                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+        <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- Layout principal -->
-        <div class="layout">
-            <!-- Sidebar -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
+
+
+
+
+
+
+
+
+
+
+
+        <div class="main-container">
+            <nav class="sidebar">
+                <ul>
                     <li>🏠 <a href="/gerente">Inicio</a></li>
                     <li>👥 <a href="/gerente/clientes">Clientes</a></li>
                     <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
 
-        <!-- Contenido principal -->
-        <main>
-            <h1>✏️ Editar Proyecto</h1>
+            <div class="content">
+                <h2 class="form-title">Editar Proyecto</h2>
 
-            <!-- Mostrar errores si los hay -->
-            <div th:if="${error}" style="color: red;">
-                <p th:text="${error}"></p>
+                <form method="POST" th:action="@{'/gerente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" class="form-container">
+                    <label class="form-label" for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" th:value="*{titulo}" required class="form-input">
+
+
+                    <label class="form-label" for="descripcion">Descripción:</label>
+                    <textarea type="text" id="descripcion" name="descripcion" th:field="*{descripcion}" required rows="4" cols="50" class="form-input"></textarea>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <label class="form-label" for="medioEncargo">Medio de Encargo:</label>
+                    <input type="text" id="medioEncargo" name="medioEncargo" th:value="*{medioEncargo}" required class="form-input">
+
+                    <label class="form-label">Presupuesto:</label>
+                    <input type="number" name="presupuesto" th:value="*{presupuesto}" required class="form-input" step="0.1">
+
+                    <div th:if="${error}" class="error-message">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="form-button">Guardar</button>
+                        <a href="/gerente/proyectos"><button type="button" class="form-button cancel-button">Cancelar</button></a>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Formulario para editar el proyecto -->
-            <form th:action="@{'/gerente/proyectos/editar/' + ${proyecto.id}}" th:object="${proyecto}" method="post">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" th:field="*{titulo}" required />
 
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" th:field="*{descripcion}" rows="4" required></textarea>
 
-                <label for="medioEncargo">Medio de Encargo:</label>
-                <input type="text" id="medioEncargo" th:field="*{medioEncargo}" required />
 
-                <label for="presupuesto">Presupuesto:</label>
-                <input type="number" id="presupuesto" th:field="*{presupuesto}" min="0" required />
 
-                <button type="submit">Guardar cambios</button>
-                <a th:href="@{/gerente/proyectos}">
-                    <button type="button">Cancelar</button>
-                </a>
-            </form>
-        </main>
-    </div>
 
-</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
 </html>

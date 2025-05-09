@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - DevFlow</title>
-    <link rel="stylesheet" href="/css/login.css">
-            <script src="/js/alertas.js"></script>
-</head>
-<body>
-    <div class="login-container">
-        <h2>Iniciar Sesión</h2>
-        <form action="/login" method="post">
-            <label for="nombre">Nombre de usuario:</label>
-            <input type="text" id="nombre" name="nombre" required>
+    <head>
+        <meta charset="UTF-8">
+        <title>Login - DevFlow</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Gabriela&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/login.css">
+        <script src="/js/alertas.js"></script>
+    </head>
+    <body>
+        <div class="login-container">
+            <h2>Iniciar Sesión</h2>
+            <form action="/login" method="post">
+                <label for="nombre">Nombre de usuario:</label>
+                <input type="text" id="nombre" name="nombre" required>
 
-            <label for="contrasenia">Contraseña:</label>
-            <input type="password" id="contrasenia" name="contrasenia" required>
+                <label for="contrasenia">Contraseña:</label>
+                <input type="password" id="contrasenia" name="contrasenia" required>
 
-            <input type="submit" value="Ingresar">
-        </form>
-    </div>
-</body>
+                <input type="submit" value="Ingresar">
+            </form>
+        </div>
+    </body>
 </html>
