@@ -1,33 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Panel de Gerente - DevFlow</title>
-    <link rel="stylesheet" href="css/estilos.css"> <!-- Asegurate de enlazar tu CSS -->
-</head>
-<body>
-    <!-- Encabezado -->
-    <div class="header">
-        <div class="logo">DevFlow</div>
-        <div>
-            <span>Gerente: <span th:text="${usuario.nombre}">Nombre</span></span>
-            <button class="logout-btn" onclick="window.location.href = '/login'">Cerrar sesión</button>
-        </div>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel de Gerente - DevFlow</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${usuario.nombre}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <!-- Contenedor principal -->
-    <div class="main-container">
-        <!-- Barra lateral -->
-        <nav class="sidebar">
-            <ul>
-                <li>🏠 <a href="/gerente">Inicio</a></li>
-                <li>👥 <a href="/gerente/clientes">Clientes</a></li>
-                <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
-            </ul>
-        </nav>
+        <!-- Contenedor principal -->
+        <div class="main-container">
+            <!-- Barra lateral -->
+            <nav class="sidebar">
+                <ul>
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                </ul>
+            </nav>
 
-        <!-- Contenido principal -->
-        <main class="content">
+            <!-- Contenido principal -->
+            <main class="content">
                 <section class="user-card">
                     <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">user_name</span></p>
                     <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
@@ -43,6 +57,6 @@
                     <div class="card orange">Proyectos en pausa: <span th:text="${CantProyectosEnPausa}">0</span></div>
                 </section>
             </main>
-    </div>
-</body>
+        </div>
+    </body>
 </html>

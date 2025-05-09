@@ -3,54 +3,68 @@
     <head>
         <meta charset="UTF-8">
         <title>Mis Proyectos - DevFlow</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
-    <body>
-        <!-- Encabezado -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-            <h2>DevFlow</h2>
-            <div>
-                <span>Cliente: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <h2 class="logo">DevFlow</h2>
+        <div class="user-info">
+            <div class="user-dropdown">
+                <div class="user-avatar" onclick="toggleDropdown()">
+                    <img src="/img/usuario-cliente.png" alt="Avatar" class="avatar-img">
+                    <span th:text="${nombreUsuario}">Nombre</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-menu" id="userMenu">
+                    <a href="/cliente">Perfil</a>
+                    <a href="/login">Cerrar sesión</a>
+                </div>
             </div>
         </div>
+    </header>
 
-        <!-- Contenedor principal -->
-        <div style="display: flex; height: 90vh;">
-            <!-- Barra lateral -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
-                    <li>🏠 <a href="/cliente">Inicio</a></li>
-                    <li>📁 <a href="/cliente/proyectos">Mis Proyectos</a></li>
-                </ul>
-            </nav>
+    <!-- Contenedor principal -->
+    <div class="main-container">
 
-            <!-- Contenido principal -->
-            <main style="flex: 1; padding: 30px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>📁 Mis Proyectos</h3>
-                </div>
+        <!-- Barra lateral -->
+        <nav class="sidebar">
+            <ul>
+                <li>🏠 <a href="/cliente">Inicio</a></li>
+                <li>📁 <a href="/cliente/proyectos">Proyectos</a></li>
+            </ul>
+        </nav>
 
-                <br>
+        <!-- Contenido principal -->
+        <main class="content">
+            <h2>Mis Proyectos</h2>
 
-                <!-- Filtros de búsqueda -->
-                <form action="/cliente/proyectos" method="get" style="margin-bottom: 20px;">
-                    <input type="text" name="filtro" placeholder="Buscar por título..." th:value="${filtro}">
-                    <select name="estado">
-                        <option value="">Todos los estados</option>
-                        <option th:value="'ESPERANDO_REVISION'" th:selected="${estadoSeleccionado == 'ESPERANDO_REVISION'}">Esperando revisión</option>
-                        <option th:value="'APROBADO'" th:selected="${estadoSeleccionado == 'APROBADO'}">Aprobado</option>
-                        <option th:value="'RECHAZADO'" th:selected="${estadoSeleccionado == 'RECHAZADO'}">Rechazado</option>
-                        <option th:value="'EN_PROGRESO'" th:selected="${estadoSeleccionado == 'EN_PROGRESO'}">En progreso</option>
-                        <option th:value="'COMPLETADO'" th:selected="${estadoSeleccionado == 'COMPLETADO'}">Completado</option>
-                        <option th:value="'CANCELADO'" th:selected="${estadoSeleccionado == 'CANCELADO'}">Cancelado</option>
-                        <option th:value="'EN_PAUSA'" th:selected="${estadoSeleccionado == 'EN_PAUSA'}">En pausa</option>
-                    </select>
-                    <button type="submit">Buscar</button>
-                </form>
+            <!-- Filtros de búsqueda -->
+            <form action="/cliente/proyectos" method="get" class="filter-form">
+                <input type="text" name="filtro" placeholder="Buscar por título..." th:value="${filtro}">
+                <select name="estado">
+                    <option value="">Todos los estados</option>
+                    <option th:value="'ESPERANDO_REVISION'" th:selected="${estadoSeleccionado == 'ESPERANDO_REVISION'}">Esperando revisión</option>
+                    <option th:value="'APROBADO'" th:selected="${estadoSeleccionado == 'APROBADO'}">Aprobado</option>
+                    <option th:value="'RECHAZADO'" th:selected="${estadoSeleccionado == 'RECHAZADO'}">Rechazado</option>
+                    <option th:value="'EN_PROGRESO'" th:selected="${estadoSeleccionado == 'EN_PROGRESO'}">En progreso</option>
+                    <option th:value="'EN_PAUSA'" th:selected="${estadoSeleccionado == 'EN_PAUSA'}">En pausa</option>
+                    <option th:value="'CANCELADO'" th:selected="${estadoSeleccionado == 'CANCELADO'}">Cancelado</option>
+                    <option th:value="'COMPLETADO'" th:selected="${estadoSeleccionado == 'COMPLETADO'}">Completado</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
 
-
-                <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
-                    <thead style="background-color: #f0f0f0;">
+            <!-- Tabla de proyectos -->
+            <div class="user-card">
+                <table class="user-table">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>Título</th>
@@ -71,14 +85,14 @@
                             <td th:text="${proyecto.fechaFinalizacion != null ? #dates.format(proyecto.fechaFinalizacion, 'dd/MM/yyyy') : '--'}"></td>
                             <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
                             <td th:text="${proyecto.medioEncargo}"></td>
-                            <td>
+                            <td class="actions">
                                 <a th:href="@{'/cliente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </main>
-        </div>
-        <script src="/js/alertas.js"></script>
-    </body>
+            </div>
+        </main>
+    </div>
+</body>
 </html>

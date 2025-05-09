@@ -3,66 +3,79 @@
     <head>
         <meta charset="UTF-8">
         <title>Listado de Proyectos - DevFlow</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
     <body>
-        <!-- Encabezado -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #f0f0f0; border-bottom: 1px solid #ccc;">
-            <h2>DevFlow</h2>
-            <div>
-                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+         <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
-        </div>
+        </header>
 
-        <!-- Contenedor principal -->
-        <div style="display: flex; height: 90vh;">
-
+      <div class="main-container">
             <!-- Barra lateral -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
+            <nav class="sidebar">
+                <ul>
                     <li>🏠 <a href="/gerente">Inicio</a></li>
                     <li>👥 <a href="/gerente/clientes">Clientes</a></li>
                     <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
-
+            
             <!-- Contenido principal -->
-            <div style="flex: 1; padding: 20px;">
-                <h2>👥 Usuarios</h2>
+            <main class="content">
+                <h2>Clientes</h2>
 
                 <!-- Filtros de búsqueda -->
-                <form action="/gerente/usuarios" method="get" style="margin-bottom: 20px;">
+                <form action="/gerente/clientes" method="get" class="filter-form">
                     <input type="text" name="filtro" placeholder="Buscar por nombre o email..." th:value="${filtro}">
                     <button type="submit">Buscar</button>
                 </form>
 
                 <!-- Tabla de usuarios -->
-                <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Teléfono</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="usu : ${usuarios}">
-                            <td th:text="${usu.id}"></td>
-                            <td th:text="${usu.nombre}"></td>
-                            <td th:text="${usu.email}"></td>
-                            <td th:text="${usu.telefono}"></td>
-                            <td th:text="${usu.rol}"></td>
-                            <td>
-                                <a th:href="@{'/gerente/clientes/detalles/' + ${usu.id}}">👁️</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <!-- Tabla de usuarios -->
+                <div class="user-card">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usu : ${usuarios}">
+                                <td th:text="${usu.id}"></td>
+                                <td th:text="${usu.nombre}"></td>
+                                <td th:text="${usu.email}"></td>
+                                <td th:text="${usu.telefono}"></td>
+                                <td class="actions">
+                                    <a th:href="@{'/gerente/clientes/detalles/' + ${usu.id}}">👁</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
-        <script src="/js/alertas.js"></script>
     </body>
 </html>
