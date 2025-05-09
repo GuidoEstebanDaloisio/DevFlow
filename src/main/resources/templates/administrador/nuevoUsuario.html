@@ -1,43 +1,78 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Crear nuevo usuario</title>
-</head>
-<body>
-    <h2>Crear nuevo usuario</h2>
+    <head>
+        <meta charset="UTF-8">
+        <title>Crear nuevo usuario</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/formularios.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
+    </head>
 
-    <form method="POST" action="/admin/usuarios/nuevo">
-        <label>Nombre:<br>
-            <input type="text" name="nombre" th:value="${nombre}" required>
-        </label><br><br>
+    <body>
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-administrador.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/admin">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        <label>Email:<br>
-            <input type="email" name="email" th:value="${email}" required>
-        </label><br><br>
+        <div class="main-container">
+            <nav class="sidebar">
+                <ul>
+                    <li>🏠 <a href="#">Inicio</a></li>
+                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+                </ul>
+            </nav>
 
-        <label>Teléfono:<br>
-            <input type="text" name="telefono" th:value="${telefono}" required>
-        </label><br><br>
+            <div class="content">
+                <h2 class="form-title">Nuevo usuario</h2>
 
-        <label>Rol:<br>
-            <select name="rol" required>
-                <option value="ADMINISTRADOR" th:selected="${rol == 'ADMINISTRADOR'}">Administrador</option>
-                <option value="GERENTE" th:selected="${rol == 'GERENTE'}">Gerente</option>
-                <option value="CLIENTE" th:selected="${rol == 'CLIENTE'}">Cliente</option>
-            </select>
-        </label><br><br>
+                <form method="POST" action="/admin/usuarios/nuevo" class="form-container">
+                    <label class="form-label">Nombre:</label>
+                    <input type="text" name="nombre" th:value="${nombre}" required class="form-input">
 
-        <label>Contraseña:<br>
-            <input type="password" name="contrasenia" th:value="${contrasenia}" required>
-        </label><br><br>
+                    <label class="form-label">Email:</label>
+                    <input type="email" name="email" th:value="${email}" required class="form-input">
 
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
+                    <label class="form-label">Teléfono:</label>
+                    <input type="text" name="telefono" th:value="${telefono}" required class="form-input">
+
+                    <label class="form-label">Rol:</label>
+                    <select name="rol" required class="form-input">
+                        <option value="ADMINISTRADOR" th:selected="${rol == 'ADMINISTRADOR'}">Administrador</option>
+                        <option value="GERENTE" th:selected="${rol == 'GERENTE'}">Gerente</option>
+                        <option value="CLIENTE" th:selected="${rol == 'CLIENTE'}">Cliente</option>
+                    </select>
+
+                    <label class="form-label">Contraseña:</label>
+                    <input type="password" name="contrasenia" th:value="${contrasenia}" required class="form-input">
+
+                    <div th:if="${error}" class="error-message">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="form-button">Guardar</button>
+                        <a href="/admin/usuarios"><button type="button" class="form-button cancel-button">Cancelar</button></a>
+                    </div>
+                </form>
+            </div>
         </div>
-        
-        <button type="submit">Guardar</button>
-        <a href="/admin/usuarios"><button type="button">Cancelar</button></a>
-    </form>
-</body>
+    </body>
 </html>

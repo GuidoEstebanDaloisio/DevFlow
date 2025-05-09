@@ -157,6 +157,7 @@ public class ProyectoController {
         }
 
         List<Usuario> clientes = usuarioService.obtenerUsuariosPorRol(CLIENTE);
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         model.addAttribute("clientes", clientes);
 
         return "gerente/nuevoProyecto";
@@ -223,6 +224,7 @@ public class ProyectoController {
         if (!usuario.esGerente()) {
             return "redirect:/login";
         }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         try {
             Usuario cliente = usuarioService.obtenerUsuarioPorId(clienteId);

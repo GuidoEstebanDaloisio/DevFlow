@@ -1,28 +1,65 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Crear nuevo desarrollador</title>
-</head>
-<body>
-    <h2>Crear nuevo desarrollador</h2>
-
-    <form method="POST" action="/admin/desarrolladores/nuevo">
-        <label>Nombre:<br>
-            <input type="text" name="nombre" th:value="${nombre}" required>
-        </label><br><br>
-
-        <label>Habilidades:<br>
-            <input type="text" name="habilidades" th:value="${habilidades}" placeholder="Ej: Java, React, SQL" required>
-        </label><br><br>
-
+    <head>
+        <meta charset="UTF-8">
+        <title>Crear nuevo desarrollador</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/formularios.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
+    </head>
+    <body>
         
-        <div th:if="${error}" style="color: red;">
-            <p th:text="${error}"></p>
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-administrador.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/admin">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <nav class="sidebar">
+                <ul>
+                    <li>🏠 <a href="#">Inicio</a></li>
+                    <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
+                    <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
+                    <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
+                </ul>
+            </nav>
+
+            <div class="content">
+                <h2 class="form-title">Nuevo desarrollador</h2>
+
+                <form method="POST" action="/admin/desarrolladores/nuevo" class="form-container">
+                    <label class="form-label">Nombre:</label>
+                    <input type="text" name="nombre" th:value="${nombre}" required class="form-input">
+ 
+                    <label class="form-label">Habilidades:</label>
+                    <input type="text" name="habilidades" th:value="${habilidades}" placeholder="Ej: Java, React, SQL" required class="form-input">
+
+                    <div th:if="${error}" class="error-message">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="form-button">Guardar</button>
+                        <a href="/admin/usuarios"><button type="button" class="form-button cancel-button">Cancelar</button></a>
+                    </div>
+                </form>
+            </div>
         </div>
-        
-        <button type="submit">Guardar</button>
-        <a href="/admin/desarrolladores"><button type="button">Cancelar</button></a>
-    </form>
-</body>
+    </body>
 </html>

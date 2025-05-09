@@ -59,6 +59,7 @@ public class DesarrolladorController {
         }
 
         // Muestra la vista con el formulario
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         return "administrador/nuevoDesarrollador";
     }
 
@@ -139,7 +140,7 @@ public class DesarrolladorController {
     }
 
     @GetMapping("/admin/desarrolladores/eliminar/{id}")
-    public String eliminarDesarrollador(@PathVariable Long id, 
+    public String eliminarDesarrollador(@PathVariable Long id,
             HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuario");

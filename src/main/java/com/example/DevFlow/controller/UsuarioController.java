@@ -27,7 +27,6 @@ public class UsuarioController {
     @Autowired
     private ProyectoService proyectoService;
 
-   
     //-VISTAS GERENTE---------------------------------------------------------------------------------------    
     @GetMapping("/gerente/clientes")
     public String verClientesComoGerente(
@@ -121,6 +120,8 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
+        model.addAttribute("nombreUsuario", usuario.getNombre());
+
         // Muestra la vista con el formulario
         return "administrador/nuevoUsuario";
     }
@@ -162,6 +163,8 @@ public class UsuarioController {
             return "redirect:/login";
         }
 
+        model.addAttribute("nombreUsuario", usuarioSesion.getNombre());
+
         try {
             usuarioService.crearUsuario(nombre, contrasenia, email, telefono, rol);
             return "redirect:/admin/usuarios";
@@ -179,7 +182,7 @@ public class UsuarioController {
     @GetMapping("/admin/usuarios/eliminar/{id}")
     public String eliminarUsuario(
             @PathVariable Long id,
-            HttpSession session){
+            HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (!usuario.esAdministrador()) {

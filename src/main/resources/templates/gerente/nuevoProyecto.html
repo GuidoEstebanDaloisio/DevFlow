@@ -3,33 +3,80 @@
     <head>
         <meta charset="UTF-8">
         <title>Nuevo Proyecto - DevFlow</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/formularios.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
+   
     <body>
-        <h2>Nuevo Proyecto</h2>
+        <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        <form th:action="@{/gerente/proyectos/nuevo}" method="post">
-            <label>Título:</label>
-            <input type="text" name="titulo" required><br><br>
 
-            <label>Descripción:</label>
-            <textarea name="descripcion" rows="4" cols="50" required></textarea><br><br>
+        <!-- Contenedor principal -->
+        <div class="main-container">
+            <!-- Barra lateral -->
+            <nav class="sidebar">
+                <ul>
+                    <li>🏠 <a href="/gerente">Inicio</a></li>
+                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                </ul>
+            </nav>
 
-            <label>Medio de Encargo:</label>
-            <input type="text" name="medio_encargo" required><br><br>
+            <div class="content">
+                <h2 class="form-title">Nuevo Proyecto</h2>
 
-            <label>Presupuesto:</label>
-            <input type="number" name="presupuesto" step="0.01" required><br><br>
+                <form method="POST" action="/gerente/proyectos/nuevo" class="form-container">
+                    <label class="form-label">Titulo:</label>
+                    <input type="text" name="titulo" th:value="${titulo}" required class="form-input">
 
-            <label>Cliente:</label>
-            <select name="clienteId" required>
-                <option value="">-- Seleccionar Cliente --</option>
-                <option th:each="cliente : ${clientes}"
-                        th:value="${cliente.id}"
-                        th:text="${cliente.nombre}"></option>
-            </select><br><br>
+                    <label class="form-label">Descripción:</label>
+                    <textarea type="text" name="descripcion" th:value="${descripcion}" required class="form-input" rows="4" cols="50"></textarea>
 
-            <button type="submit">Crear Proyecto</button>
-            <a href="/gerente/proyectos"><button type="button">Cancelar</button></a>
-        </form>
+                    <label class="form-label">Medio de Encargo:</label>
+                    <input type="text" name="medio_encargo" th:value="${medio_encargo}" required class="form-input">
+
+                    <label class="form-label">Presupuesto:</label>
+                    <input type="number" name="presupuesto" th:value="${presupuesto}" required class="form-input" step="0.01">
+
+                    <label class="form-label">Cliente:</label>
+                    <select name="clienteId" required class="form-input">
+                        <option value="">-- Seleccionar Cliente --</option>
+                        <option th:each="cliente : ${clientes}"
+                                th:value="${cliente.id}"
+                                th:text="${cliente.nombre}"></option>
+                    </select>
+
+                    <div th:if="${error}" class="error-message">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="form-button">Guardar</button>
+                        <a href="/gerente/proyectos"><button type="button" class="form-button cancel-button">Cancelar</button></a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </body>
 </html>
