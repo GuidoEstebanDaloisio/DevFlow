@@ -33,13 +33,13 @@ public class LoginController {
 
             switch (usuario.getRol()) {
                 case ADMINISTRADOR:
-                    return "administrador/inicio";
+                    return "redirect:/admin";
 
                 case GERENTE:
-                    return "gerente/inicio";
+                    return "redirect:/gerente";
 
                 case CLIENTE:
-                    return "cliente/inicio";
+                    return "redirect:/cliente";
                 default:
                     return "redirect:/login?error=" + URLEncoder.encode("Este usuario tiene un rol no implementado", StandardCharsets.UTF_8);
             }
