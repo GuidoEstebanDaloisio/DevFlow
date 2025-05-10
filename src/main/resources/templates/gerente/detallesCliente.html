@@ -3,70 +3,38 @@
     <head>
         <meta charset="UTF-8">
         <title>Detalle del Proyecto</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #f0f0f0;
-                padding: 15px;
-                border-bottom: 1px solid #ccc;
-            }
-            nav {
-                width: 200px;
-                background-color: #e0e0e0;
-                padding: 20px;
-                height: 100vh;
-            }
-            nav ul {
-                list-style: none;
-                padding: 0;
-            }
-            nav li {
-                margin-bottom: 10px;
-            }
-            .layout {
-                display: flex;
-            }
-            main {
-                flex-grow: 1;
-                padding: 20px;
-            }
-            table {
-                text-align: left;
-                border-collapse: collapse;
-                width: 100%;
-                margin-top: 20px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 10px;
-            }
-            .input-fecha, .input-fecha-final {
-                margin: 20px 0;
-            }
-        </style>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
     <body>
 
-        <!-- Header -->
-        <header>
-            <h2>DevFlow</h2>
-            <div>
-                <span>Gerente: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+        <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${usuario.nombre}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- Layout principal -->
-        <div class="layout">
-            <!-- Sidebar -->
-            <nav style="width: 200px; background-color: #e0e0e0; padding: 20px;">
-                <ul style="list-style-type: none; padding: 0;">
+        <!-- Contenedor principal -->
+        <div class="main-container">
+            <!-- Barra lateral -->
+            <nav class="sidebar">
+                <ul>
                     <li>🏠 <a href="/gerente">Inicio</a></li>
                     <li>👥 <a href="/gerente/clientes">Clientes</a></li>
                     <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
@@ -74,54 +42,51 @@
             </nav>
 
             <!-- Contenido principal -->
-            <main>
-                <h1>Detalles del Usuario</h1>
+            <main class="content">
+                <section class="user-card">
+                    <p><strong>ID:</strong> <span th:text="${usuario.id}">user_name</span></p>
+                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">user_name</span></p>
+                    <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
+                    <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">user_tel</span></p>
+                </section>
+                <div class="new-element-btn">
 
-                <!-- Detalles del proyecto -->
-                <div>
-                    <p><strong>ID:</strong> <span th:text="${usuario.id}"></span></p>
-                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
-                    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-                    <p><strong>Telefono:</strong> <span th:text="${usuario.telefono}"></span></p>
-                </div>    
-
-
-                <!-- Tabla de desarrolladores -->
-                <h2>Proyectos Solicitados</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Estado de avance</th>
-                            <th>Fecha de inicio</th>
-                            <th>Fecha de finalización</th>
-                            <th>Presupuesto</th>
-                            <th>Medio de encargo</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="proyecto : ${proyectosSolicitados}">
-                            <td th:text="${proyecto.id}"></td>
-                            <td th:text="${proyecto.titulo}"></td>
-                            <td th:text="${proyecto.estadoAvance}"></td>
-                            <td th:text="${proyecto.fechaInicio != null ? #dates.format(proyecto.fechaInicio, 'dd/MM/yyyy') : '--'}"></td>
-                            <td th:text="${proyecto.fechaFinalizacion != null ? #dates.format(proyecto.fechaFinalizacion, 'dd/MM/yyyy') : '--'}"></td>
-                            <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
-                            <td th:text="${proyecto.medioEncargo}"></td>
-                            <td>
-                                <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <a href="/gerente/clientes">
-                    <button type="button">Volver a Clientes</button>
-                </a>                
+                    <a href="/gerente/clientes">
+                        <button type="button">Volver a Clientes</button>
+                    </a>
+                </div>
+                <!-- Tabla de proyectos -->
+                <div class="user-card">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Estado de avance</th>
+                                <th>Fecha de inicio</th>
+                                <th>Fecha de finalización</th>
+                                <th>Presupuesto</th>
+                                <th>Medio de encargo</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="proyecto : ${proyectosSolicitados}">
+                                <td th:text="${proyecto.id}"></td>
+                                <td th:text="${proyecto.titulo}"></td>
+                                <td th:text="${proyecto.estadoAvance}"></td>
+                                <td th:text="${proyecto.fechaInicio != null ? #dates.format(proyecto.fechaInicio, 'dd/MM/yyyy') : '--'}"></td>
+                                <td th:text="${proyecto.fechaFinalizacion != null ? #dates.format(proyecto.fechaFinalizacion, 'dd/MM/yyyy') : '--'}"></td>
+                                <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
+                                <td th:text="${proyecto.medioEncargo}"></td>
+                                <td class="actions">
+                                    <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </main>
-        </div>
-
+        </div>        
     </body>
 </html>

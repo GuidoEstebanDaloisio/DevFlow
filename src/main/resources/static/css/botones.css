@@ -1,0 +1,62 @@
+/*---BOTON ASIGNAR Y DESASIGNAR DESARROLLADOR-----------------------------------------------*/
+.btn {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-asignar {
+    background-color: #55efc4;
+    color: #2d3436;
+}
+
+.btn-asignar:hover {
+    background-color: #00b894;
+    color: white;
+}
+
+.btn-desasignar {
+    background-color: #fab1a0;
+    color: #2d3436;
+}
+
+.btn-desasignar:hover {
+    background-color: #d63031;
+    color: white;
+}
+
+/*---BOTONES DE ESTADO DEL PROYECTO-------------------------------------------------------*/
+.boton-estado {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-estado {
+    background-color: #A3C4F3; /* Azul pastel habilitado */
+    color: #333;
+}
+
+.boton-estado:hover {
+    background-color: #6D9BF1; /* Azul más fuerte al pasar el mouse */
+    color: white;
+}
+
+.boton-estado:active {
+    background-color: #6D9BF1; /* Igual al hover, más marcado */
+    color: white;
+}
+
+.boton-estado:disabled {
+    background-color: #DCE8FB; /* Azul muy claro para el estado bloqueado */
+    color: #999;
+    cursor: not-allowed;
+}

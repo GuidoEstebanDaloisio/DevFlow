@@ -3,71 +3,39 @@
     <head>
         <meta charset="UTF-8">
         <title>Detalle del Proyecto</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #f0f0f0;
-                padding: 15px;
-                border-bottom: 1px solid #ccc;
-            }
-            nav {
-                width: 200px;
-                background-color: #e0e0e0;
-                padding: 20px;
-                height: 100vh;
-            }
-            nav ul {
-                list-style: none;
-                padding: 0;
-            }
-            nav li {
-                margin-bottom: 10px;
-            }
-            .layout {
-                display: flex;
-            }
-            main {
-                flex-grow: 1;
-                padding: 20px;
-            }
-            table {
-                text-align: left;
-                border-collapse: collapse;
-                width: 100%;
-                margin-top: 20px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 10px;
-            }
-            .input-fecha, .input-fecha-final {
-                margin: 20px 0;
-            }
-        </style>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
     <body>
 
         <!-- Header -->
-        <header>
-            <h2>DevFlow</h2>
-            <div>
-                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-administrador.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${usuario.nombre}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/admin">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- Layout principal -->
-        <div class="layout">
-            <!-- Sidebar -->
-            <nav>
+        <!-- Contenedor principal -->
+        <div class="main-container">
+            <!-- Barra lateral -->
+            <nav class="sidebar">
                 <ul>
-                    <li>🏠 <a href="/admin">Inicio</a></li>
+                    <li>🏠 <a href="#">Inicio</a></li>
                     <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
                     <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
                     <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
@@ -75,28 +43,23 @@
             </nav>
 
             <!-- Contenido principal -->
-            <main>
-                <h1>Detalles del Usuario</h1>
-
-                <!-- Detalles del proyecto -->
-                <div>
-                    <p><strong>ID:</strong> <span th:text="${usuario.id}"></span></p>
-                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
-                    <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-                    <p><strong>Telefono:</strong> <span th:text="${usuario.telefono}"></span></p>
-                    <p><strong>Rol:</strong> <span th:text="${usuario.rol}"></span></p>
+            <main class="content">
+                <section class="user-card">
+                    <p><strong>ID:</strong> <span th:text="${usuario.id}">user_name</span></p>
+                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">user_name</span></p>
+                    <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
+                    <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">user_tel</span></p>
+                    <p><strong>Rol:</strong> <span th:text="${usuario.rol}">user_rol</span></p>
+                </section>
+                <div class="new-element-btn">
+                    <a th:href="@{'/admin/usuarios/editar/' + ${usuario.id}}">
+                        <button type="button">Editar Usuario</button>
+                    </a>
+                    <a href="/admin/usuarios">
+                        <button type="button">Volver a Usuarios</button>
+                    </a>
                 </div>
-
-
-
-                <a href="/admin/usuarios">
-                    <button type="button">Volver a Usuarios</button>
-                </a>
-                <a th:href="@{'/admin/usuarios/editar/' + ${usuario.id}}">
-                    <button type="button">Editar Usuario</button>
-                </a>
             </main>
         </div>
-
     </body>
 </html>

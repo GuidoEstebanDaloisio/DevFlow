@@ -116,6 +116,7 @@ public class ProyectoController {
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
         List<Desarrollador> desarrolladoresAsignados = desarrolladorService.obtenerPorProyecto(proyecto);
 
+        model.addAttribute("nombreUsuario", usuario.getNombre());
         model.addAttribute("proyecto", proyecto);
         model.addAttribute("desarrolladoresAsignados", desarrolladoresAsignados);
 
@@ -197,7 +198,7 @@ public class ProyectoController {
         Proyecto proyecto = proyectoService.obtenerProyectoPorId(id);
 
         model.addAttribute("nombreUsuario", usuario.getNombre());
-        
+
         try {
             proyectoService.consultarSiEsPosibleEditarElProyecto(proyecto);
 

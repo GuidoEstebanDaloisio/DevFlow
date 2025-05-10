@@ -4,143 +4,123 @@
     <head>
         <meta charset="UTF-8">
         <title>Detalles del Proyecto</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                padding: 20px;
-            }
-
-            .botones-container {
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-                margin-bottom: 30px;
-            }
-
-            .boton-estado {
-                padding: 10px 20px;
-                border-radius: 10px;
-                border: 2px solid #ccc;
-                background-color: #f9f9f9;
-                cursor: pointer;
-                text-align: center;
-                min-width: 120px;
-                font-size: 14px;
-                font-weight: normal;
-                color: black;
-            }
-
-            .boton-estado[disabled] {
-                background-color: #e0e0e0;
-                color: #a0a0a0;
-                border-color: #ccc;
-                cursor: not-allowed;
-                font-weight: normal;
-            }
-
-            .seleccionado {
-                background-color: #e7f1ff;
-                color: #007bff;
-                border-color: #007bff;
-                font-weight: bold;
-            }
-
-            .boton-estado[disabled].seleccionado-deshabilitado {
-                background-color: #e7f1ff;
-                color: #007bff;
-                border-color: #007bff;
-                font-weight: bold;
-            }
-
-            .input-fecha {
-                display: none;
-                margin-top: 20px;
-            }
-
-        </style>
-
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/botones.css">
+        <link rel="stylesheet" href="/css/formularios.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
         <script src="/js/estado-transiciones.js"></script>
     </head>
     <body>
-        <input type="hidden" id="estado-actual" th:value="${proyecto.estadoAvance.name()}"/>
-
-        <h1>Detalles del Proyecto</h1>
-        <form action="#" method="post" id="formCambioEstado">
-            <button id="ESPERANDO_REVISION" class="boton-estado" type="submit" name="nuevoEstado" value="ESPERANDO_REVISION" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-revisarse=${proyecto.puedeVolverARevision}">Esperando revisión</button>
-            <button id="APROBADO" class="boton-estado" type="submit" name="nuevoEstado" value="APROBADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-aprobarse=${proyecto.puedeAprobarse}">Aprobado</button>
-            <button id="RECHAZADO" class="boton-estado" type="submit" name="nuevoEstado" value="RECHAZADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-rechazarse=${proyecto.puedeRechazarse}">Rechazado</button>
-            <button id="EN_PROGRESO" class="boton-estado" type="submit" name="nuevoEstado" value="EN_PROGRESO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-comenzar=${proyecto.puedeDesarrollarse}, data-tiene-fecha-inicio=${proyecto.fechaInicio != null}"> En progreso </button>
-            <button id="CANCELADO" class="boton-estado" type="submit" name="nuevoEstado" value="CANCELADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-cancelarse=${proyecto.puedeCancelarse}">Cancelado</button>
-            <button id="EN_PAUSA" class="boton-estado" type="submit" name="nuevoEstado" value="EN_PAUSA" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-pausarse=${proyecto.puedePausarse}">Pausado</button>
-            <button id="COMPLETADO" class="boton-estado" type="submit" name="nuevoEstado" value="COMPLETADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-finalizarse=${proyecto.puedeFinalizarse}">Finalizado</button>
-        </form>
-
-
-        <!-- Formulario para ingresar fecha -->
-        <form id="formGuardarFecha"
-              th:action="@{/gerente/proyectos/detalles/{id}/guardar-fecha(id=${proyecto.id})}"
-              method="post">
-            <div class="input-fecha" style="display:none;">
-                <label for="fecha-inicio">Para comenzar el desarrollo, ingrese una fecha de inicio:</label>
-                <input type="date" id="fecha-inicio" name="fechaInicio" required>
-                <button type="submit" id="guardar-fecha">Guardar Fecha</button>
+        <!-- Encabezado -->
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-gerente.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/gerente">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
-        </form>
+        </header>
 
+        <!-- Contenido principal -->
+        <main class="content">
+            <section class="user-card">
 
+                    <input type="hidden" id="estado-actual" th:value="${proyecto.estadoAvance.name()}"/>
 
-        <!-- Formulario para ingresar fecha de finalización -->
-        <form id="formGuardarFechaFinal"
-              th:action="@{/gerente/proyectos/detalles/{id}/guardar-fecha-final(id=${proyecto.id})}"
-              method="post">
-            <div class="input-fecha-final" style="display:none;">
-                <label for="fecha-final">Para finalizar el proyecto, ingrese una fecha de finalización:</label>
-                <input type="date" id="fecha-final" name="fechaFin" required>
-                <button type="submit" id="guardar-fecha-final">Guardar Fechan</button>
+                
+                <h1>Estado:</h1>
+                <form action="#" method="post" id="formCambioEstado">
+                    <button id="ESPERANDO_REVISION" class="boton-estado" type="submit" name="nuevoEstado" value="ESPERANDO_REVISION" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-revisarse=${proyecto.puedeVolverARevision}">Esperando revisión</button>
+                    <button id="APROBADO" class="boton-estado" type="submit" name="nuevoEstado" value="APROBADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-aprobarse=${proyecto.puedeAprobarse}">Aprobado</button>
+                    <button id="RECHAZADO" class="boton-estado" type="submit" name="nuevoEstado" value="RECHAZADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-rechazarse=${proyecto.puedeRechazarse}">Rechazado</button>
+                    <button id="EN_PROGRESO" class="boton-estado" type="submit" name="nuevoEstado" value="EN_PROGRESO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-comenzar=${proyecto.puedeDesarrollarse}, data-tiene-fecha-inicio=${proyecto.fechaInicio != null}"> En progreso </button>
+                    <button id="CANCELADO" class="boton-estado" type="submit" name="nuevoEstado" value="CANCELADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-cancelarse=${proyecto.puedeCancelarse}">Cancelado</button>
+                    <button id="EN_PAUSA" class="boton-estado" type="submit" name="nuevoEstado" value="EN_PAUSA" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-pausarse=${proyecto.puedePausarse}">Pausado</button>
+                    <button id="COMPLETADO" class="boton-estado" type="submit" name="nuevoEstado" value="COMPLETADO" th:action="@{/gerente/proyectos/detalles/{id}(id=${proyecto.id})}" th:attr="data-puede-finalizarse=${proyecto.puedeFinalizarse}">Finalizado</button>
+                </form>
+
+                <!-- Formulario para ingresar fecha -->
+                <form id="formGuardarFecha"
+                      th:action="@{/gerente/proyectos/detalles/{id}/guardar-fecha(id=${proyecto.id})}"
+                      method="post">
+                    <div class="input-fecha" style="display:none;">
+                        <label for="fecha-inicio">Para comenzar el desarrollo, ingrese una fecha de inicio:</label>
+                        <input type="date" id="fecha-inicio" name="fechaInicio" required>
+                        <button type="submit" id="guardar-fecha">Guardar Fecha</button>
+                    </div>
+                </form>
+
+                <!-- Formulario para ingresar fecha de finalización -->
+                <form id="formGuardarFechaFinal"
+                      th:action="@{/gerente/proyectos/detalles/{id}/guardar-fecha-final(id=${proyecto.id})}"
+                      method="post">
+                    <div class="input-fecha-final" style="display:none;">
+                        <label for="fecha-final">Para finalizar el proyecto, ingrese una fecha de finalización:</label>
+                        <input type="date" id="fecha-final" name="fechaFin" required>
+                        <button type="submit" id="guardar-fecha-final">Guardar Fechan</button>
+                    </div>
+                </form>
+
+                <p><strong>ID:</strong> <span th:text="${proyecto.id}"></span></p>
+                <p><strong>Título:</strong> <span th:text="${proyecto.titulo}"></span></p>
+                <p><strong>Descripción:</strong> <span th:text="${proyecto.descripcion}"></span></p>
+                <p><strong>Medio de Encargo:</strong> <span th:text="${proyecto.medioEncargo}"></span></p>
+                <p><strong>Presupuesto:</strong> $<span th:text="${proyecto.presupuesto}"></span></p>
+                <p><strong>Estado de Avance:</strong> <span th:text="${proyecto.estadoAvance}"></span></p>
+                <p><strong>Fecha de Inicio:</strong>
+                    <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
+                </p>
+                <p><strong>Fecha de Finalización:</strong>
+                    <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
+                </p>
+                <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
+            </section>
+
+            <div class="new-element-btn">
+                <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}">
+                    <button type="button">Editar Proyecto</button>
+                </a>
+                <a href="/gerente/proyectos">
+                    <button type="button">Volver a Proyectos</button>
+                </a>
             </div>
-        </form>
 
+            <div th:if="${proyecto.estadoAvance.name() == 'EN_PROGRESO' or proyecto.estadoAvance.name() == 'EN_PAUSA'}">
 
+                <div class="user-card">
 
-
-
-        <div>
-            <p><strong>ID:</strong> <span th:text="${proyecto.id}"></span></p>
-            <p><strong>Título:</strong> <span th:text="${proyecto.titulo}"></span></p>
-            <p><strong>Descripción:</strong> <span th:text="${proyecto.descripcion}"></span></p>
-            <p><strong>Medio de Encargo:</strong> <span th:text="${proyecto.medioEncargo}"></span></p>
-            <p><strong>Presupuesto:</strong> $<span th:text="${proyecto.presupuesto}"></span></p>
-            <p><strong>Estado de Avance:</strong> <span th:text="${proyecto.estadoAvance}"></span></p>
-
-            <p><strong>Fecha de Inicio:</strong>
-                <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
-            </p>
-            <p><strong>Fecha de Finalización:</strong>
-                <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
-            </p>
-
-
-            <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
-        </div>
-
-        <h2>Desarrolladores Asignados</h2>
-        <table border="1" cellpadding="10" cellspacing="0" style="text-align: left;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Habilidades</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="dev : ${desarrolladoresAsignados}">
-                    <td th:text="${dev.id}"></td>
-                    <td th:text="${dev.nombre}"></td>
-                    <td th:text="${dev.habilidades}"></td>
-                </tr>
-            </tbody>
-        </table>
-        <a href="/gerente/proyectos"><button type="button">Volver a Proyectos</button></a>
-        <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}"><button type="button">Editar Proyecto</button></a>
-    </body>
+                    <h2>Desarrolladores Asignados</h2>
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Habilidades</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="devAsig : ${desarrolladoresAsignados}">
+                                <td th:text="${devAsig.id}"></td>
+                                <td th:text="${devAsig.nombre}"></td>
+                                <td th:text="${devAsig.habilidades}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>     
+</body>
 </html>

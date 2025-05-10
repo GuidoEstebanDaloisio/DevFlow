@@ -3,71 +3,40 @@
     <head>
         <meta charset="UTF-8">
         <title>Detalle del Proyecto</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #f0f0f0;
-                padding: 15px;
-                border-bottom: 1px solid #ccc;
-            }
-            nav {
-                width: 200px;
-                background-color: #e0e0e0;
-                padding: 20px;
-                height: 100vh;
-            }
-            nav ul {
-                list-style: none;
-                padding: 0;
-            }
-            nav li {
-                margin-bottom: 10px;
-            }
-            .layout {
-                display: flex;
-            }
-            main {
-                flex-grow: 1;
-                padding: 20px;
-            }
-            table {
-                text-align: left;
-                border-collapse: collapse;
-                width: 100%;
-                margin-top: 20px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 10px;
-            }
-            .input-fecha, .input-fecha-final {
-                margin: 20px 0;
-            }
-        </style>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/botones.css">
+        <script src="/js/usuario-logueado.js"></script>
+        <script src="/js/alertas.js"></script>
     </head>
     <body>
 
         <!-- Header -->
-        <header>
-            <h2>DevFlow</h2>
-            <div>
-                <span>Administrador: <span th:text="${nombreUsuario}">Nombre</span></span>
-                <button onclick="window.location.href = '/login'" style="margin-left: 20px;">Cerrar sesión</button>
+        <header class="header">
+            <h2 class="logo">DevFlow</h2>
+            <div class="user-info">
+                <div class="user-dropdown">
+                    <div class="user-avatar" onclick="toggleDropdown()">
+                        <img src="/img/usuario-administrador.png" alt="Avatar" class="avatar-img">
+                        <span th:text="${nombreUsuario}">Nombre</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="/admin">Perfil</a>
+                        <a href="/login">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- Layout principal -->
-        <div class="layout">
-            <!-- Sidebar -->
-            <nav>
+        <!-- Contenedor principal -->
+        <div class="main-container">
+            <!-- Barra lateral -->
+            <nav class="sidebar">
                 <ul>
-                    <li>🏠 <a href="/admin">Inicio</a></li>
+                    <li>🏠 <a href="#">Inicio</a></li>
                     <li>📁 <a href="/admin/proyectos">Proyectos</a></li>
                     <li>👥 <a href="/admin/usuarios">Usuarios</a></li>
                     <li>🧠 <a href="/admin/desarrolladores">Desarrolladores</a></li>
@@ -75,92 +44,95 @@
             </nav>
 
             <!-- Contenido principal -->
-            <main>
-                <input type="hidden" id="estado-actual" th:value="${proyecto.estadoAvance.name()}"/>
-
-                <h1>Detalles del Proyecto</h1>
-
-                <!-- Detalles del proyecto -->
-                <div>
+            <main class="content">
+                <section class="user-card">
                     <p><strong>ID:</strong> <span th:text="${proyecto.id}"></span></p>
-                    <p><strong>Título:</strong> <span th:text="${proyecto.titulo}"></span></p>
+                    <p><strong>Título:</strong> <span th:text="${proyecto.titulo}"</span></p>
                     <p><strong>Descripción:</strong> <span th:text="${proyecto.descripcion}"></span></p>
                     <p><strong>Medio de Encargo:</strong> <span th:text="${proyecto.medioEncargo}"></span></p>
-                    <p><strong>Presupuesto:</strong> $<span th:text="${proyecto.presupuesto}"></span></p>
+                    <p><strong>Presupuesto:</strong> $ <span th:text="${proyecto.presupuesto}"></span></p>
                     <p><strong>Estado de Avance:</strong> <span th:text="${proyecto.estadoAvance}"></span></p>
                     <p><strong>Fecha de Inicio:</strong>
                         <span th:text="${proyecto.fechaInicio != null} ? ${#dates.format(proyecto.fechaInicio, 'yyyy-MM-dd')} : ''"></span>
                     </p>
-                    <p><strong>Fecha de Finalización:</strong>
+                    <p><strong>Fecha de Finalización:</strong> 
                         <span th:text="${proyecto.fechaFinalizacion != null} ? ${#dates.format(proyecto.fechaFinalizacion, 'yyyy-MM-dd')} : ''"></span>
-                    </p>
+                    </p> 
                     <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
-                </div>
 
-                <!-- Tabla de desarrolladores del proyecto -->
-                <h2>Desarrolladores Asignados</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Habilidades</th>
-                            <th>Desasignar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="devAsig : ${desarrolladoresAsignados}">
-                            <td th:text="${devAsig.id}"></td>
-                            <td th:text="${devAsig.nombre}"></td>
-                            <td th:text="${devAsig.habilidades}"></td>
-                            <td>
-                                <form th:action="@{/admin/desasignarDesarrollador}" method="post">
-                                    <input type="hidden" name="proyectoId" th:value="${proyecto.id}" />
-                                    <input type="hidden" name="desarrolladorId" th:value="${devAsig.id}" />
-                                    <button type="submit">Desasignar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                </section>
+
+                <div class="new-element-btn">
+                    <a href="/admin/proyectos">
+                        <button type="button">Volver a Proyectos</button>
+                    </a>
+                </div>
 
                 <div th:if="${proyecto.estadoAvance.name() == 'EN_PROGRESO' or proyecto.estadoAvance.name() == 'EN_PAUSA'}">
 
-                    <h2>Desarrolladores disponibles</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Habilidades</th>
-                                <th>Asignar al Proyecto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="devDis : ${desarrolladoresDisponibles}">
-                                <td th:text="${devDis.id}"></td>
-                                <td th:text="${devDis.nombre}"></td>
-                                <td th:text="${devDis.habilidades}"></td>
-                                <td>
-                                    <form th:action="@{/admin/asignarDesarrollador}" method="post">
-                                        <input type="hidden" name="proyectoId" th:value="${proyecto.id}" />
-                                        <input type="hidden" name="desarrolladorId" th:value="${devDis.id}" />
-                                        <button type="submit">Asignar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
 
-                    </table>
+                    <div class="asignacion-container">
+                        <div class="user-card tabla-asignados">
+                            <!-- Tabla de desarrolladores del proyecto -->
+                            <h2>Desarrolladores Asignados</h2>
+                            <table class="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Habilidades</th>
+                                        <th>Desasignar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="devAsig : ${desarrolladoresAsignados}">
+                                        <td th:text="${devAsig.id}"></td>
+                                        <td th:text="${devAsig.nombre}"></td>
+                                        <td th:text="${devAsig.habilidades}"></td>
+                                        <td>
+                                            <form th:action="@{/admin/desasignarDesarrollador}" method="post">
+                                                <input type="hidden" name="proyectoId" th:value="${proyecto.id}" />
+                                                <input type="hidden" name="desarrolladorId" th:value="${devAsig.id}" />
+                                                <button type="submit" class="btn btn-desasignar">Desasignar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="user-card tabla-disponibles">
+                            <!-- Tabla de desarrolladores disponibles -->
+                            <h2>Desarrolladores disponibles</h2>
+                            <table class="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Habilidades</th>
+                                        <th>Asignar al Proyecto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="devDis : ${desarrolladoresDisponibles}">
+                                        <td th:text="${devDis.id}"></td>
+                                        <td th:text="${devDis.nombre}"></td>
+                                        <td th:text="${devDis.habilidades}"></td>
+                                        <td>
+                                            <form th:action="@{/admin/asignarDesarrollador}" method="post">
+                                                <input type="hidden" name="proyectoId" th:value="${proyecto.id}" />
+                                                <input type="hidden" name="desarrolladorId" th:value="${devDis.id}" />
+                                                <button type="submit" class="btn btn-asignar">Asignar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-
-
-
-                <a href="/admin/proyectos">
-                    <button type="button">Volver a Proyectos</button>
-                </a>
             </main>
         </div>
-
     </body>
 </html>
