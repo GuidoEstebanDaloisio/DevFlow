@@ -1,0 +1,74 @@
+PC 1: BBDD
+-----------
+	🔶Paso 1: Configurar MySQL en XAMPP
+		🔹Click en Config de MySQL → seleccioná my.ini y reemplazá "bind-address = 127.0.0.1" por "bind-address = 0.0.0.0".
+		
+		🔹Guardá el archivo y reiniciá MySQL desde el panel de XAMPP.
+	
+	🔶Paso 2: Crear un usuario remoto en MySQL 
+		🔹Abrí phpMyAdmin desde el navegador (usualmente en localhost/phpmyadmin).
+
+		🔹Andá a la pestaña "Usuarios" → Click en "Agregar nuevo usuario".
+
+		🔹Completá así:
+			▶Nombre de usuario: guido
+			▶Servidor: seleccioná "Cualquier host" (%)
+			▶Contraseña: ContraseñaSegura (cambiarla en el properties)
+			▶Hacé click en "Crear usuario".
+
+		🔹En la misma pantalla, otorgale todos los privilegios a la base de datos correspondiente.
+		
+	🔶Paso 3: Asegurar que el puerto 3306 esté abierto
+		🔹Abrí el Panel de control → Seguridad de Windows → Firewall → Configuración avanzada.
+
+		🔹En el panel de la izquierda, hacé clic en "Reglas de entrada".
+
+		🔹En el panel derecho, clic en "Nueva regla...".
+
+		🔹En el asistente que se abre:
+
+		🔹Seleccioná Puerto → clic en Siguiente.
+
+		🔹Elegí TCP.
+
+		🔹En "Puertos locales específicos", escribí:3306
+
+		🔹En "Nombre", poné algo como: MySQL 3306 remoto y clic en Finalizar.
+
+
+PC 2: Programa
+--------------
+	🔶Paso 1: Obtener la ip de la pc 1 con ipconfig. 
+		🔹Buscá la sección que diga algo como: 
+			▶Adaptador de red inalámbrica Wi-Fi o Adaptador de Ethernet
+		
+		🔹Ahí vas a ver una línea como esta:
+			▶Dirección IPv4. . . . . . . . . . . . : 192.168.0.5
+
+	🔶Paso 2: Editar application.properties
+		🔹Añadir los datos de la BBDD
+			▶spring.datasource.url=jdbc:mysql://192.168.0.63/devflow
+			▶spring.datasource.username=guido
+			▶spring.datasource.password=ContraseñaSegura
+
+		🔹Asegurar que Spring Boot escuche en la IP externa
+			▶server.address=0.0.0.0 (prestar atencion a no dejar espacios despues de los 0)
+
+	🔶Paso 3: Abrir el puerto en el firewall de la PC
+		🔹Abrí el Firewall de Windows con seguridad avanzada.
+
+		🔹Andá a Reglas de entrada → Nueva regla....
+
+		🔹Elegí: 
+			▶Tipo: Puerto
+			▶TCP
+			▶Puerto específico: 8080 (o el que estés usando)
+			▶Acción: Permitir la conexión
+			▶Perfiles: marcá todos (Dominio, Privado, Público)
+			▶Nombre: Spring Boot puerto 8080		
+
+PC 3: Aplicacion
+----------------
+	🔶Paso 1: Obtener la ip de la pc 2 con ipconfig. 
+	🔶Paso 2: Acceder desde la PC3
+		🔹http://192.168.0.10:8080
