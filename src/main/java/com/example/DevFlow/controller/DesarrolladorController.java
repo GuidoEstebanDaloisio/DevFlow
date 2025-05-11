@@ -72,6 +72,7 @@ public class DesarrolladorController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         try {
             Desarrollador desarrollador = desarrolladorService.obtenerDesarrolladorPorId(id);
@@ -163,6 +164,7 @@ public class DesarrolladorController {
         if (!usuario.esAdministrador()) {
             return "redirect:/login";
         }
+        model.addAttribute("nombreUsuario", usuario.getNombre());
 
         try {
             desarrolladorService.actualizarNombreYHabilidades(id, desarrolladorActualizado.getNombre(), desarrolladorActualizado.getHabilidades());
