@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/botones.css">
         <script src="/js/usuario-logueado.js"></script>
         <script src="/js/alertas.js"></script>
     </head>
@@ -35,9 +36,9 @@
             <!-- Barra lateral -->
             <nav class="sidebar">
                 <ul>
-                    <li>🏠 <a href="/gerente">Inicio</a></li>
-                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
-                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                    <li>🟣 <a href="/gerente">Inicio</a></li>
+                    <li>🟣 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>🟣 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
 
@@ -49,7 +50,7 @@
                     <p><strong>Email:</strong> <span th:text="${usuario.email}">user_email</span></p>
                     <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">user_tel</span></p>
                 </section>
-                <div class="new-element-btn">
+                <div class="btn-generico">
 
                     <a href="/gerente/clientes">
                         <button type="button">Volver a Clientes</button>
@@ -80,7 +81,7 @@
                                 <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
                                 <td th:text="${proyecto.medioEncargo}"></td>
                                 <td class="actions">
-                                    <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
+                                    <button class="btn btn-ver" th:onclick="'location.href=\'/gerente/proyectos/detalles/' + ${proyecto.id} + '\''">Ver</button>
                                 </td>
                             </tr>
                         </tbody>

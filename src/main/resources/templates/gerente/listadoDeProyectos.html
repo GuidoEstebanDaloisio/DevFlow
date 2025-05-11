@@ -6,7 +6,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/estilos.css">     
+        <link rel="stylesheet" href="/css/estilos.css">
+        <link rel="stylesheet" href="/css/botones.css">
         <script src="/js/usuario-logueado.js"></script>
         <script src="/js/alertas.js"></script>
     </head>
@@ -34,9 +35,9 @@
             <!-- Barra lateral -->
             <nav class="sidebar">
                 <ul>
-                    <li>🏠 <a href="/gerente">Inicio</a></li>
-                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
-                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                    <li>🟣 <a href="/gerente">Inicio</a></li>
+                    <li>🟣 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>🟣 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
 
@@ -85,9 +86,10 @@
                                 <td th:text="${'$ %.2f'.formatted(proyecto.presupuesto)}"></td>
                                 <td th:text="${proyecto.medioEncargo}"></td>
                                 <td class="actions">
-                                    <a th:href="@{'/gerente/proyectos/detalles/' + ${proyecto.id}}">👁️</a>
-                                    <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}">✏</a>
-                                    <a th:href="@{'/gerente/proyectos/eliminar/' + ${proyecto.id}}">🗑</a> 
+                                    <button class="btn btn-ver" th:onclick="'location.href=\'/gerente/proyectos/detalles/' + ${proyecto.id} + '\''">Ver</button>
+                                    <button class="btn btn-editar" th:onclick="'location.href=\'/gerente/proyectos/editar/' + ${proyecto.id} + '\''">Editar</button>
+                                    <button class="btn btn-eliminar" th:onclick="'location.href=\'/gerente/proyectos/eliminar/' + ${proyecto.id} + '\''">Eliminar</button>
+                                    
                                 </td>
                             </tr>
                         </tbody>
@@ -95,7 +97,7 @@
                 </div>
 
                 <!-- Botón para crear nuevo usuario -->
-                <div class="new-element-btn" style="margin-top: 20px;">
+                <div class="btn-generico" style="margin-top: 20px;">
                     <a href="/gerente/proyectos/nuevo">
                         <button>+ Solicitar nuevo proyecto</button>
                     </a>

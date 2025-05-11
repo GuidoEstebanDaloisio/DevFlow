@@ -1,3 +1,59 @@
+/*---BOTON GENERICO-------------------------------------------------------------------------*/
+.btn-generico button {
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+    margin-bottom: 30px;
+}
+
+.btn-generico button:hover {
+    background-color: #5a4acb;
+}
+
+
+
+
+/*---BOTONES DE ACCIÓN: VER / EDITAR / ELIMINAR-------------------------------------------*/
+.btn-ver {
+    background-color: #a29bfe;
+    color: #2d3436;
+}
+
+.btn-ver:hover {
+    background-color: #6c5ce7;
+    color: white;
+
+}
+
+.btn-editar {
+    background-color: #ffeaa7;
+    color: #2d3436;
+}
+
+.btn-editar:hover {
+    background-color: #fdcb6e;
+    color: white;
+}
+
+.btn-eliminar {
+    background-color: #fab1a0;
+    color: #2d3436;
+}
+
+.btn-eliminar:hover {
+    background-color: #d63031;
+    color: white;
+}
+
+
+
 /*---BOTON ASIGNAR Y DESASIGNAR DESARROLLADOR-----------------------------------------------*/
 .btn {
     font-size: 16px;

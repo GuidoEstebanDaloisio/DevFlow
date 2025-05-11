@@ -40,9 +40,9 @@
             <!-- Barra lateral -->
             <nav class="sidebar">
                 <ul>
-                    <li>🏠 <a href="/gerente">Inicio</a></li>
-                    <li>👥 <a href="/gerente/clientes">Clientes</a></li>
-                    <li>📁 <a href="/gerente/proyectos">Proyectos</a></li>
+                    <li>🟣 <a href="/gerente">Inicio</a></li>
+                    <li>🟣 <a href="/gerente/clientes">Clientes</a></li>
+                    <li>🟣 <a href="/gerente/proyectos">Proyectos</a></li>
                 </ul>
             </nav>
             <!-- Contenido principal -->
@@ -98,7 +98,7 @@
                     <p><strong>Cliente:</strong> <span th:text="${proyecto.usuario.nombre}"></span></p>
                 </section>
 
-                <div class="new-element-btn">
+                <div class="btn-generico">
                     <a th:href="@{'/gerente/proyectos/editar/' + ${proyecto.id}}">
                         <button type="button">Editar Proyecto</button>
                     </a>
