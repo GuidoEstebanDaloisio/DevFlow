@@ -1,0 +1,105 @@
+---DESARROLLADORES--------------------------------------------------
+
+INSERT INTO desarrollador (id, esta_disponible, habilidades, nombre)
+VALUES 
+  (0, TRUE, 'Kotlin, Android', 'Julieta');
+  (1, TRUE, 'Java, Spring Boot', 'Alejandro'),
+  (2, TRUE, 'Python, Django', 'Marina'),
+  (3, TRUE, 'JavaScript, React', 'Bruno'),
+  (4, TRUE, 'C#, .NET', 'Florencia'),
+  (5, TRUE, 'PHP, Laravel', 'Luciano'),
+  (6, TRUE, 'C++, Qt', 'Gabriela'),
+  (7, TRUE, 'Ruby, Rails', 'Nicolás'),
+  (8, TRUE, 'Go, Microservicios', 'Carla'),
+  (9, TRUE, 'SQL, PL/SQL', 'Esteban'),
+
+---SECUENCIA_DESARROLLADOR-----------------------------------------------------
+UPDATE secuencia_desarrollador SET next_val = 11;
+
+
+---USUARIOS--------------------------------------------------------------------
+
+INSERT INTO usuario (id, contrasenia, email, nombre, rol, telefono)
+VALUES 
+  ('0', '123', 'guido@gmail.com', 'Guido', 'ADMINISTRADOR', '1234567890'),
+  ('1', '123', 'sofia.admin@gmail.com', 'Sofía', 'ADMINISTRADOR', '1234567891'),
+  ('2', '123', 'maria.gerente@gmail.com', 'María', 'GERENTE', '1234567892'),
+  ('3', '123', 'roberto.gerente@gmail.com', 'Roberto', 'GERENTE', '1234567893'),
+  ('4', '123', 'juan.cliente@gmail.com', 'Juan', 'CLIENTE', '1234567894'),
+  ('5', '123', 'lucia.cliente@gmail.com', 'Lucía', 'CLIENTE', '1234567895'),
+  ('6', '123', 'carla.cliente@gmail.com', 'Carla', 'CLIENTE', '1234567896'),
+  ('7', '123', 'andres.cliente@gmail.com', 'Andrés', 'CLIENTE', '1234567897'),
+  ('8', '123', 'paula.cliente@gmail.com', 'Paula', 'CLIENTE', '1234567898'),
+  ('9', '123', 'federico.cliente@gmail.com', 'Federico', 'CLIENTE', '1234567899'),
+  ('10', '123', 'camila.cliente@gmail.com', 'Camila', 'CLIENTE', '1234567800'),
+  ('11', '123', 'nicolas.cliente@gmail.com', 'Nicolás', 'CLIENTE', '1234567801'),
+  ('12', '123', 'valentina.cliente@gmail.com', 'Valentina', 'CLIENTE', '1234567802'),
+  ('13', '123', 'martin.cliente@gmail.com', 'Martín', 'CLIENTE', '1234567803'),
+  ('14', '123', 'florencia.cliente@gmail.com', 'Florencia', 'CLIENTE', '1234567804');
+
+---SECUENCIA_USUARIO-----------------------------------------------------------------------
+UPDATE secuencia_usuario SET next_val = 15;
+
+
+
+---PROYECTOS----------------------------------------------------------------------------------------------------------
+
+1)
+Titulo: Sistema de Gestión de Inventarios
+Descripción: Sistema web para controlar el stock y las entradas/salidas de productos en múltiples depósitos.
+Medio de encargo: Correo electrónico institucional
+Presupuesto: 3500
+
+2)
+Titulo: Plataforma de Educación Virtual
+Descripción: Plataforma personalizada para educación a distancia con soporte para clases en vivo, foros y evaluaciones.
+Medio de encargo: Formulario de contacto en sitio web
+Presupuesto: 6000
+
+3)
+Titulo: Portal de Reclamos Municipales
+Descripción: Sistema web para gestionar reclamos ciudadanos y derivarlos al área correspondiente.
+Medio de encargo: Nota formal impresa
+Presupuesto: 4200
+
+4)
+Titulo: App de Gestión de Turnos Médicos
+Descripción: Aplicación para que pacientes soliciten turnos y los médicos gestionen su disponibilidad.
+Medio de encargo: Correo electrónico oficial
+Presupuesto: 5000
+
+5)
+Titulo: Sistema de Control de Producción Industrial
+Descripción: Software de escritorio vinculado a sensores industriales para monitoreo en tiempo real.
+Medio de encargo: Llamada telefónica registrada
+Presupuesto: 7800
+
+6)
+Titulo: Marketplace para Productos Regionales
+Descripción: Plataforma de e-commerce para conectar productores regionales con consumidores directos.
+Medio de encargo: Solicitud enviada por formulario web
+Presupuesto: 4500
+
+7)
+Titulo: Gestión Documental para Consultoras
+Descripción: Aplicación para clasificar, almacenar y compartir documentos internos de forma segura.
+Medio de encargo: Correo electrónico de gerencia
+Presupuesto: 3800
+
+8)
+Titulo: Portal de Transparencia Institucional
+Descripción: Sitio para publicación de balances, licitaciones y contratos de una entidad pública.
+Medio de encargo: Carta formal escaneada
+Presupuesto: 3900
+
+9)
+Titulo: App de Seguimiento de Proyectos Sociales
+Descripción: Sistema web que permite monitorear indicadores de impacto en proyectos comunitarios.
+Medio de encargo: Formulario institucional
+Presupuesto: 3600
+
+10)
+Titulo: Aplicación para Encuestas de Satisfacción
+Descripción: App para crear y analizar encuestas de satisfacción para clientes de una empresa de servicios.
+Medio de encargo: Llamada telefónica con registro
+Presupuesto: 2500
