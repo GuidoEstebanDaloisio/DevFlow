@@ -17,9 +17,6 @@
     background-color: #5a4acb;
 }
 
-
-
-
 /*---BOTONES DE ACCIÓN: VER / EDITAR / ELIMINAR-------------------------------------------*/
 .btn-ver {
     background-color: #a29bfe;
@@ -94,25 +91,48 @@
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
 }
 
 .boton-estado {
-    background-color: #A3C4F3; /* Azul pastel habilitado */
-    color: #333;
-}
-
-.boton-estado:hover {
-    background-color: #6D9BF1; /* Azul más fuerte al pasar el mouse */
+    background-color: #347eff;  /* Azul habilitado */
     color: white;
 }
 
-.boton-estado:active {
-    background-color: #6D9BF1; /* Igual al hover, más marcado */
+.boton-estado:hover {
+    background-color: #005eff ; /* Azul más fuerte al pasar el mouse */
     color: white;
 }
 
 .boton-estado:disabled {
-    background-color: #DCE8FB; /* Azul muy claro para el estado bloqueado */
-    color: #999;
+    background-color: #abcaff; /* Azul claro para el estado bloqueado */
+    color: white;
     cursor: not-allowed;
+}
+
+.estado-actual {
+    background-color: #4fed54 !important; /* Verde suave */
+    color: white;
+    font-weight: bold;
+}
+
+/*---BOTONES DE ASIGNAR FECHA DE INICIO Y FIN DE PROYECTO---------------------------------*/
+
+
+.btn-asignar-fecha{
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btn-asignar-fecha:hover {
+    background-color: #5a4acb;
 }
